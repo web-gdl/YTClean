@@ -46,8 +46,9 @@ if (args.includes('-J')) {
     process.exit(0);
   }
   if (url.includes('/videos') || url.includes('playlist?list=')) {
-    const start = Number(opt('--playlist-start') ?? 1);
-    const end = Number(opt('--playlist-end') ?? 60);
+    const items = /^(\d*):(\d*)$/.exec(opt('--playlist-items') ?? '');
+    const start = Number(items?.[1] || 1);
+    const end = Number(items?.[2] || 60);
     const total = url.includes('playlist?list=') ? 55 : 42;
     const entries = [];
     for (let i = start; i <= Math.min(end, total); i++) entries.push(entry(i, url.includes('playlist') ? 'pl' : 'ch'));

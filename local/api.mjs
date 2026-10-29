@@ -58,8 +58,8 @@ export class Api {
 
   async flat(url, { start, end } = {}) {
     const args = ['--flat-playlist', '--ignore-errors'];
-    if (start) args.push('--playlist-start', String(start));
-    if (end) args.push('--playlist-end', String(end));
+    // -I START:STOP limita las entradas (y las peticiones de continuación) de la pestaña o lista.
+    if (start || end) args.push('--playlist-items', `${start ?? 1}:${end ?? ''}`);
     args.push(url);
     return this.ytdlp.json(args);
   }
