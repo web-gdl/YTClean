@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 0.4.0 — 2026-10-29
+
+App Android, funciones al estilo LibreTube:
+- **Segundo plano**: el reproductor vive en un servicio con MediaSession; controles en la notificación y la pantalla de bloqueo (anterior/reproducir/siguiente).
+- **Suscripciones locales** sin cuenta y pestaña de novedades (pestaña «Vídeos» de cada canal, en paralelo).
+- **SponsorBlock** con consulta por prefijo de hash (privacidad); salta patrocinios, autopromoción, recordatorios y partes sin música. Desactivable.
+- **Listas locales** (crear, añadir, quitar, reproducir todo, aleatorio) y **cola** (reproducir a continuación, añadir a la cola, ver/saltar, avance automático).
+- **Subtítulos** (VTT/TTML) seleccionables en el reproductor; opción para activarlos por defecto.
+- **Descargas** de audio (M4A) o vídeo MP4 hasta la calidad elegida (vídeo + audio unidos sin recodificar) a Descargas/YTClean, con progreso en la notificación.
+- **Shorts** ocultables (por defecto ocultos) e **historial** opcional (desactivado por defecto).
+- Navegación inferior: Buscar · Suscripciones · Biblioteca; pantalla de ajustes.
+
 ## 0.3.0 — 2026-10-29
 
 - **App Android nativa** (`android/`, Kotlin): sustituye al envoltorio Capacitor, que no era práctico (sin fuente configurada no buscaba). Busca y reproduce al instalarla: NewPipeExtractor en el teléfono, ExoPlayer/Media3 con manifiestos DASH, PoToken por WebView y peticiones como las de NewPipe. Canales, guardados, calidad, solo audio, pantalla completa, imagen en imagen y enlaces compartidos. Licencia GPL-3.0-or-later para la app Android.

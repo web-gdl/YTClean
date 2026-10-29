@@ -8,20 +8,24 @@
 
 ## Qué hace
 
-- Buscar vídeos (sin búsquedas mientras escribes, sin tendencias ni recomendaciones) con desplazamiento infinito.
-- Pegar o **compartir** un enlace de YouTube con la app (o abrirlo desde el navegador) para reproducirlo directamente.
-- Reproductor: calidad (360p…2160p), **solo audio**, pantalla completa al girar, **imagen en imagen**, compartir, descripción.
-- Canales: vídeos del canal con paginación.
-- Guardados: mantén pulsado un vídeo o usa «Guardar». Solo en el teléfono.
-- Ajustes: calidad por defecto, solo audio por defecto, borrar datos.
+- **Buscar** (solo al enviar; sin tendencias ni recomendaciones), con desplazamiento infinito. Abre enlaces compartidos o pegados.
+- **Reproductor nativo**: calidad 144p–2160p, solo audio, subtítulos, pantalla completa, imagen en imagen y **segundo plano con controles en la notificación**.
+- **Cola**: «Reproducir a continuación», «Añadir a la cola», ver y saltar en la cola, avance automático.
+- **SponsorBlock**: salta patrocinios, autopromoción, recordatorios de suscripción y partes sin música.
+- **Suscripciones locales** (sin cuenta) con pestaña de novedades.
+- **Biblioteca**: guardados, listas de reproducción locales, canales suscritos, historial (opcional) y descargas.
+- **Descargas** de audio (M4A) o vídeo MP4 (vídeo y audio unidos sin recodificar) a Descargas/YTClean.
+- **Shorts** ocultos por defecto (desactivable en Ajustes).
 
-Lo que **no** hace, a propósito: cuentas, historial, recomendaciones, comentarios, notificaciones, analítica, telemetría, publicidad. El único permiso es `INTERNET`. Los datos (guardados y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
+Mantén pulsado cualquier vídeo para ver todas las acciones.
 
-Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin cuenta ni cookies de sesión (como con NewPipe). Este acceso no es conforme a las condiciones de servicio de YouTube; es un proyecto personal.
+Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones y servicios en primer plano (reproducción y descargas). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
+
+Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin cuenta ni cookies de sesión (como con NewPipe). Con SponsorBlock activado, sponsor.ajay.app recibe tu IP y los 4 primeros caracteres del hash SHA-256 del ID del vídeo (compartidos por muchos vídeos). Este acceso no es conforme a las condiciones de servicio de YouTube; es un proyecto personal.
 
 ## Descargar e instalar
 
-1. **Releases** del repositorio → la más reciente (`YT Clean 0.3.0-N`) → `YTClean-0.3.0-N.apk`. También queda como artefacto `YTClean-apk` en la ejecución de **Actions → APK Android**.
+1. **Releases** del repositorio → la más reciente (`YT Clean 0.4.0-N`) → `YTClean-0.4.0-N.apk`. También queda como artefacto `YTClean-apk` en la ejecución de **Actions → APK Android**.
 2. Ábrelo en el teléfono y permite instalar apps de orígenes desconocidos.
 3. Para actualizar sin desinstalar, todas las versiones deben firmarse con la misma clave. Configúrala una vez como secreto del repositorio:
 

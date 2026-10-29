@@ -3,19 +3,18 @@ package com.webgdl.ytclean.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.webgdl.ytclean.R
-import com.webgdl.ytclean.data.Prefs
 import com.webgdl.ytclean.data.VideoItem
 import com.webgdl.ytclean.databinding.ItemVideoBinding
 
 class VideoAdapter(
     private val onClick: (VideoItem) -> Unit,
+    private val onLongClick: (VideoItem) -> Unit,
 ) : ListAdapter<VideoItem, VideoAdapter.Holder>(Diff) {
 
     class Holder(val b: ItemVideoBinding) : RecyclerView.ViewHolder(b.root)
@@ -44,8 +43,7 @@ class VideoAdapter(
         b.thumb.load(item.thumbnail)
         b.root.setOnClickListener { onClick(item) }
         b.root.setOnLongClickListener {
-            val saved = Prefs(ctx).toggleSaved(item)
-            Toast.makeText(ctx, if (saved) "Guardado" else "Quitado de guardados", Toast.LENGTH_SHORT).show()
+            onLongClick(item)
             true
         }
     }

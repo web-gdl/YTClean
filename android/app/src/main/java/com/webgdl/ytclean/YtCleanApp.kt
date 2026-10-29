@@ -1,6 +1,8 @@
 package com.webgdl.ytclean
 
 import android.app.Application
+import com.webgdl.ytclean.data.Library
+import com.webgdl.ytclean.data.Yt
 import com.webgdl.ytclean.net.DownloaderImpl
 import com.webgdl.ytclean.potoken.PoTokenProviderImpl
 import org.schabi.newpipe.extractor.NewPipe
@@ -22,6 +24,7 @@ class YtCleanApp : Application() {
         )
         // Tokens de integridad (BotGuard) generados en un WebView local, como NewPipe.
         YoutubeStreamExtractor.setPoTokenProvider(PoTokenProviderImpl)
+        Yt.hideShorts = Library(this).hideShorts
     }
 
     companion object {

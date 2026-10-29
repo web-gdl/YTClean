@@ -19,8 +19,13 @@ class FeedController(
     private val progress: View,
     private val message: TextView,
     private val emptyText: String,
+    onLongClick: ((VideoItem) -> Unit)? = null,
+    onClick: ((VideoItem, List<VideoItem>) -> Unit)? = null,
 ) {
-    private val adapter = VideoAdapter { openVideo(list.context, it.url) }
+    private val adapter = VideoAdapter(
+        onClick = { item -> if (onClick != null) onClick(item, items) else openVideo(list.context, item.url) },
+        onLongClick = { item -> if (onLongClick != null) onLongClick(item) else VideoActions.show(list.context, item) },
+    )
     private var feed: Feed? = null
     private var items = emptyList<VideoItem>()
     private var job: Job? = null

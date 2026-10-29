@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Reproducción">
+        <ListPreference
+            app:defaultValue="720"
+            app:entries="@array/quality_labels"
+            app:entryValues="@array/quality_values"
+            app:key="quality"
+            app:title="Calidad máxima de vídeo"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="audio_only"
+            app:summary="Ideal para música y pódcasts"
+            app:title="Solo audio por defecto" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="captions"
+            app:summary="En el idioma del teléfono, si existen. También desde el botón de subtítulos del reproductor"
+            app:title="Activar subtítulos" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="sponsorblock"
+            app:summary="Salta patrocinios, autopromoción y recordatorios de suscripción (base comunitaria sponsor.ajay.app; solo se envía un prefijo del ID del vídeo)"
+            app:title="SponsorBlock" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Contenido">
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="hide_shorts"
+            app:title="Ocultar Shorts" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Privacidad">
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="history"
+            app:summary="Solo en este teléfono. Desactivado por defecto"
+            app:title="Guardar historial de reproducción" />
+        <Preference
+            app:key="clear_history"
+            app:title="Borrar historial" />
+        <Preference
+            app:key="clear_all"
+            app:summary="Guardados, listas, suscripciones, historial y ajustes"
+            app:title="Borrar todos los datos" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Acerca de">
+        <Preference
+            app:selectable="false"
+            app:summary="@string/about"
+            app:title="YT Clean" />
+    </PreferenceCategory>
+</PreferenceScreen>

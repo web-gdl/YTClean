@@ -10,192 +10,154 @@ import android.util.Rational
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
-import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import coil3.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.webgdl.ytclean.R
-import com.webgdl.ytclean.data.Prefs
-import com.webgdl.ytclean.data.VideoItem
+import com.webgdl.ytclean.data.Library
 import com.webgdl.ytclean.data.Yt
 import com.webgdl.ytclean.databinding.ActivityPlayerBinding
+import com.webgdl.ytclean.download.DownloadWorker
+import com.webgdl.ytclean.player.PlaybackManager
+import com.webgdl.ytclean.player.PlaybackState
 import com.webgdl.ytclean.player.YtMedia
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.schabi.newpipe.extractor.stream.StreamInfo
 
 /**
- * Reproductor nativo: extrae los flujos con NewPipeExtractor y los reproduce con
- * ExoPlayer. Sin anuncios, sin cuenta, sin el reproductor de YouTube.
+ * Pantalla del reproductor. El reproductor en sí vive en [PlaybackManager] y
+ * sigue sonando en segundo plano (con controles en la notificación) al salir.
  */
 class PlayerActivity : AppCompatActivity() {
     private lateinit var b: ActivityPlayerBinding
-    private lateinit var prefs: Prefs
-    private var player: ExoPlayer? = null
-    private var info: StreamInfo? = null
-    private var url: String = ""
-    private var maxHeight = 720
-    private var audioOnly = false
-    private var loadJob: Job? = null
+    private lateinit var manager: PlaybackManager
+    private lateinit var library: Library
     private var fullscreen = false
     private var descriptionExpanded = false
+    private var shownInfoFor: String? = null
+    private val bufferingListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) = updateBuffering()
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) = updateBuffering()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         b = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(b.root)
-        prefs = Prefs(this)
-        maxHeight = prefs.quality
-        audioOnly = prefs.audioOnly
+        manager = PlaybackManager.get(this)
+        library = Library(this)
         b.playerFrame.setAspectRatio(16f / 9f)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val exo = ExoPlayer.Builder(this)
-            .setAudioAttributes(
-                AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
-                true,
-            )
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-        player = exo
-        b.playerView.player = exo
+        b.playerView.player = manager.player
         b.playerView.setFullscreenButtonClickListener { setFullscreen(it) }
-        exo.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(state: Int) {
-                b.loading.visibility = if (state == Player.STATE_BUFFERING && exo.playWhenReady) View.VISIBLE else View.GONE
-            }
+        manager.player.addListener(bufferingListener)
 
-            override fun onPlayerError(error: PlaybackException) {
-                showError("Error de reproducción (${error.errorCodeName}). Las direcciones de YouTube caducan o cambian: pulsa Reintentar.")
-            }
-        })
-
-        b.retry.setOnClickListener { load(url, keepPosition = true) }
-        b.btnAudio.isChecked = audioOnly
-        b.btnAudio.setOnClickListener {
-            audioOnly = b.btnAudio.isChecked
-            rebuild()
-        }
+        b.retry.setOnClickListener { manager.retry() }
+        b.btnAudio.setOnClickListener { manager.setAudioOnly(b.btnAudio.isChecked) }
         b.btnQuality.setOnClickListener { chooseQuality() }
+        b.btnPrev.setOnClickListener { manager.previous() }
+        b.btnNext.setOnClickListener { manager.next() }
+        b.queueInfo.setOnClickListener { showQueue() }
         b.btnShare.setOnClickListener {
-            startActivity(
-                Intent.createChooser(
-                    Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url),
-                    getString(R.string.share),
-                ),
-            )
+            val url = manager.state.value.current?.url ?: return@setOnClickListener
+            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url), getString(R.string.share)))
         }
         b.btnSave.setOnClickListener {
-            val i = info ?: return@setOnClickListener
-            val saved = prefs.toggleSaved(
-                VideoItem(
-                    url = url,
-                    title = i.name,
-                    channel = i.uploaderName ?: "",
-                    channelUrl = i.uploaderUrl,
-                    thumbnail = Yt.bestImage(i.thumbnails),
-                    durationSeconds = i.duration,
-                    views = -1,
-                    uploaded = null,
-                    isLive = false,
-                ),
-            )
-            updateSaveButton(saved)
+            val item = manager.state.value.current ?: return@setOnClickListener
+            updateSaveButton(library.toggleSaved(item))
         }
+        b.btnPlaylist.setOnClickListener { manager.state.value.current?.let { VideoActions.addToPlaylist(this, it) } }
+        b.btnDownload.setOnClickListener { chooseDownload() }
         b.descriptionToggle.setOnClickListener {
             descriptionExpanded = !descriptionExpanded
             b.description.maxLines = if (descriptionExpanded) Int.MAX_VALUE else 4
             b.descriptionToggle.setText(if (descriptionExpanded) R.string.less else R.string.more)
         }
 
-        load(intent.getStringExtra(EXTRA_URL) ?: return finish(), keepPosition = false)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (fullscreen) {
+                    setFullscreen(false)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+
+        lifecycleScope.launch { manager.state.collect { render(it) } }
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent.getStringExtra(EXTRA_URL)?.let { load(it, keepPosition = false) }
+        handleIntent(intent)
     }
 
-    private fun load(newUrl: String, keepPosition: Boolean) {
-        url = newUrl
-        val position = if (keepPosition) player?.currentPosition ?: 0 else 0
-        loadJob?.cancel()
-        hideError()
-        b.loading.visibility = View.VISIBLE
-        if (!keepPosition) {
-            player?.stop()
-            b.title.text = ""
-            b.meta.text = ""
-            b.channel.text = ""
-            b.description.text = ""
+    private fun handleIntent(intent: Intent?) {
+        val url = intent?.getStringExtra(EXTRA_URL) ?: return
+        manager.playUrl(url)
+    }
+
+    private fun updateBuffering() {
+        val p = manager.player
+        val buffering = p.playbackState == Player.STATE_BUFFERING && p.playWhenReady
+        b.loading.visibility = if (buffering || manager.state.value.loading) View.VISIBLE else View.GONE
+    }
+
+    private fun render(s: PlaybackState) {
+        updateBuffering()
+        b.error.text = s.error
+        b.error.visibility = if (s.error != null) View.VISIBLE else View.GONE
+        b.retry.visibility = b.error.visibility
+        b.notice.text = s.notice
+        b.notice.visibility = if (s.notice != null) View.VISIBLE else View.GONE
+
+        val item = s.current
+        b.title.text = item?.title?.ifBlank { "Cargando…" } ?: ""
+        b.channel.text = item?.channel ?: ""
+        b.channel.setOnClickListener { item?.channelUrl?.let { openChannel(this, it) } }
+        item?.let { updateSaveButton(library.isSaved(it.url)) }
+
+        b.btnAudio.isChecked = s.audioOnly
+        b.btnQuality.text = if (s.height > 0) "${s.height}p" else getString(R.string.quality)
+        val showArt = s.audioOnly && item?.thumbnail != null
+        b.artwork.visibility = if (showArt) View.VISIBLE else View.GONE
+        if (showArt) b.artwork.load(item?.thumbnail)
+
+        b.queueRow.visibility = if (s.queue.size > 1) View.VISIBLE else View.GONE
+        b.btnPrev.isEnabled = s.hasPrevious
+        b.btnNext.isEnabled = s.hasNext
+        b.queueInfo.text = if (s.hasNext) "Siguiente: ${s.queue[s.index + 1].title.ifBlank { "…" }}\n(${s.index + 1} de ${s.queue.size} · ver cola)" else "${s.index + 1} de ${s.queue.size} · ver cola"
+
+        val info = s.info
+        if (info != null && shownInfoFor != info.url) {
+            shownInfoFor = info.url
+            val parts = listOfNotNull(
+                if (info.viewCount >= 0) getString(R.string.views, formatCount(info.viewCount)) else null,
+                info.textualUploadDate?.ifBlank { null },
+                formatDuration(info.duration).ifBlank { null },
+                if (info.subtitles.isNotEmpty()) "subtítulos" else null,
+            )
+            b.meta.text = parts.joinToString(" · ")
+            val desc = info.description?.content().orEmpty()
+            b.description.text = HtmlCompat.fromHtml(desc, HtmlCompat.FROM_HTML_MODE_COMPACT)
+            b.descriptionToggle.visibility = if (desc.isBlank()) View.GONE else View.VISIBLE
             descriptionExpanded = false
             b.description.maxLines = 4
+            b.btnQuality.isEnabled = !YtMedia.isLive(info)
+            b.btnDownload.isEnabled = !YtMedia.isLive(info)
+        } else if (info == null) {
+            b.meta.text = ""
         }
-        loadJob = lifecycleScope.launch {
-            try {
-                val i = withContext(Dispatchers.IO) { Yt.stream(newUrl) }
-                info = i
-                showInfo(i)
-                play(i, if (keepPosition) position else i.startPosition * 1000)
-            } catch (e: Exception) {
-                if (e is kotlinx.coroutines.CancellationException) throw e
-                b.loading.visibility = View.GONE
-                showError(errorMessage(e))
-            }
-        }
-    }
-
-    private suspend fun play(i: StreamInfo, positionMs: Long) {
-        val (source, height) = withContext(Dispatchers.IO) { YtMedia.build(i, maxHeight, audioOnly) }
-        val exo = player ?: return
-        exo.setMediaSource(source, positionMs.coerceAtLeast(0))
-        exo.prepare()
-        exo.playWhenReady = true
-        b.btnQuality.text = if (height > 0) "${height}p" else getString(R.string.quality)
-        val showArt = audioOnly || height == 0
-        b.artwork.visibility = if (showArt) View.VISIBLE else View.GONE
-        if (showArt) b.artwork.load(Yt.bestImage(i.thumbnails, 720))
-    }
-
-    private fun rebuild() {
-        val i = info ?: return
-        val pos = player?.currentPosition ?: 0
-        lifecycleScope.launch {
-            try {
-                play(i, pos)
-            } catch (e: Exception) {
-                if (e is kotlinx.coroutines.CancellationException) throw e
-                showError(errorMessage(e))
-            }
-        }
-    }
-
-    private fun showInfo(i: StreamInfo) {
-        b.title.text = i.name
-        val parts = listOfNotNull(
-            if (i.viewCount >= 0) getString(R.string.views, formatCount(i.viewCount)) else null,
-            i.textualUploadDate?.ifBlank { null },
-            formatDuration(i.duration).ifBlank { null },
-        )
-        b.meta.text = parts.joinToString(" · ")
-        b.channel.text = i.uploaderName ?: ""
-        b.channel.setOnClickListener { i.uploaderUrl?.let { openChannel(this, it) } }
-        val desc = i.description?.content().orEmpty()
-        b.description.text = androidx.core.text.HtmlCompat.fromHtml(desc, androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT)
-        b.descriptionToggle.visibility = if (desc.isBlank()) View.GONE else View.VISIBLE
-        updateSaveButton(prefs.isSaved(url))
-        b.btnQuality.isEnabled = !YtMedia.isLive(i)
     }
 
     private fun updateSaveButton(saved: Boolean) {
@@ -203,32 +165,47 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun chooseQuality() {
-        val i = info ?: return
-        val options = YtMedia.qualities(i)
+        val info = manager.state.value.info ?: return
+        val options = YtMedia.qualities(info)
         if (options.isEmpty()) return
-        val labels = options.map { "${it}p" }.toTypedArray()
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.quality)
-            .setItems(labels) { _, which ->
-                maxHeight = options[which]
-                if (audioOnly) {
-                    audioOnly = false
-                    b.btnAudio.isChecked = false
+            .setItems(options.map { "${it}p" }.toTypedArray()) { _, which -> manager.setMaxHeight(options[which]) }
+            .show()
+    }
+
+    private fun chooseDownload() {
+        val s = manager.state.value
+        val info = s.info ?: return
+        val url = s.current?.url ?: return
+        val heights = YtMedia.downloadHeights(info)
+        val labels = mutableListOf("Solo audio (M4A)")
+        labels += heights.map { "Vídeo ${it}p (MP4)" }
+        if (heights.isEmpty() && YtMedia.downloadMuxed(info) != null) labels += "Vídeo (MP4)"
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Descargar")
+            .setItems(labels.toTypedArray()) { _, which ->
+                when {
+                    which == 0 -> VideoActions.download(this, url, DownloadWorker.KIND_AUDIO, 0)
+                    heights.isNotEmpty() -> VideoActions.download(this, url, DownloadWorker.KIND_VIDEO, heights[which - 1])
+                    else -> VideoActions.download(this, url, DownloadWorker.KIND_VIDEO, 360)
                 }
-                rebuild()
             }
             .show()
     }
 
-    private fun showError(text: String) {
-        b.error.text = text
-        b.error.visibility = View.VISIBLE
-        b.retry.visibility = View.VISIBLE
-    }
-
-    private fun hideError() {
-        b.error.visibility = View.GONE
-        b.retry.visibility = View.GONE
+    private fun showQueue() {
+        val s = manager.state.value
+        if (s.queue.isEmpty()) return
+        val labels = s.queue.mapIndexed { i, v -> (if (i == s.index) "▶ " else "${i + 1}. ") + v.title.ifBlank { v.url } }
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Cola de reproducción")
+            .setItems(labels.toTypedArray()) { _, which -> manager.jumpTo(which) }
+            .setNegativeButton("Vaciar y detener") { _, _ ->
+                manager.stop()
+                finish()
+            }
+            .show()
     }
 
     // ---- pantalla completa e imagen en imagen ----
@@ -268,45 +245,26 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        val exo = player ?: return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && exo.isPlaying && !audioOnly) {
+        val s = manager.state.value
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager.player.isPlaying && !s.audioOnly) {
             runCatching {
                 enterPictureInPictureMode(PictureInPictureParams.Builder().setAspectRatio(Rational(16, 9)).build())
             }
         }
+        // Con «Solo audio» (o si no hay imagen en imagen) sigue sonando en segundo plano
+        // con controles en la notificación.
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         b.playerView.useController = !isInPictureInPictureMode
-        if (isInPictureInPictureMode) {
-            b.details.visibility = View.GONE
-        } else {
-            applyFullscreenLayout(fullscreen)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // En imagen en imagen o con «Solo audio» se sigue reproduciendo mientras la app está visible en PiP;
-        // fuera de eso, se pausa: la app no reproduce ni trabaja en segundo plano.
-        if (!isInPictureInPictureMode && !audioOnly) player?.pause()
+        if (isInPictureInPictureMode) b.details.visibility = View.GONE else applyFullscreenLayout(fullscreen)
     }
 
     override fun onDestroy() {
+        manager.player.removeListener(bufferingListener)
+        b.playerView.player = null
         super.onDestroy()
-        player?.release()
-        player = null
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (fullscreen) {
-            setFullscreen(false)
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-        }
     }
 
     companion object {

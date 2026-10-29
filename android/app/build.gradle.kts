@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = (System.getenv("YC_VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("YC_VERSION_NAME") ?: "0.3.0"
+        versionName = System.getenv("YC_VERSION_NAME") ?: "0.4.0"
     }
 
     signingConfigs {
@@ -97,6 +97,10 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-dash:1.9.2")
     implementation("androidx.media3:media3-exoplayer-hls:1.9.2")
     implementation("androidx.media3:media3-ui:1.9.2")
+    implementation("androidx.media3:media3-session:1.9.2")
+
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     implementation("io.coil-kt.coil3:coil:3.4.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.4.0")
