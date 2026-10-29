@@ -18,7 +18,15 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = (System.getenv("YC_VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("YC_VERSION_NAME") ?: "0.4.0"
+        versionName = System.getenv("YC_VERSION_NAME") ?: "0.5.0"
+        // Solo los idiomas de la interfaz: las bibliotecas traen decenas más.
+        resourceConfigurations += listOf("es", "en")
+    }
+
+    // Sin el bloque de metadatos de dependencias que Google añade al APK.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 
     signingConfigs {
@@ -34,7 +42,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8: elimina código y recursos sin uso (APK mucho más ligero).
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = if (keystoreFile != null) signingConfigs.getByName("personal") else signingConfigs.getByName("debug")
         }
     }
@@ -59,6 +70,10 @@ android {
                 "META-INF/COPYRIGHT",
                 "META-INF/DEPENDENCIES",
                 "META-INF/*.kotlin_module",
+                "META-INF/*.version",
+                "META-INF/androidx.*",
+                "kotlin/**",
+                "DebugProbesKt.bin",
             )
         }
     }

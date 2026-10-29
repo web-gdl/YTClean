@@ -115,7 +115,7 @@ class PlaybackManager private constructor(context: Context) {
     fun playUrl(url: String) {
         val cur = _state.value.current
         if (cur?.url == url && _state.value.error == null) return // ya se está reproduciendo
-        playQueue(listOf(placeholder(url)))
+        playQueue(listOf(VideoItem(url)))
     }
 
     fun playNext(item: VideoItem) {
@@ -260,11 +260,6 @@ class PlaybackManager private constructor(context: Context) {
         val token = SessionToken(app, ComponentName(app, PlaybackService::class.java))
         controllerFuture = MediaController.Builder(app, token).buildAsync()
     }
-
-    private fun placeholder(url: String) = VideoItem(
-        url = url, title = "", channel = "", channelUrl = null, thumbnail = null,
-        durationSeconds = -1, views = -1, uploaded = null, isLive = false,
-    )
 
     /** Añade siguiente/anterior de la cola local a la notificación y a los controles. */
     private inner class QueuePlayer(p: ExoPlayer) : ForwardingPlayer(p) {

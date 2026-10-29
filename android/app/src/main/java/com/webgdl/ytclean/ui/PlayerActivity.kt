@@ -221,7 +221,10 @@ class PlayerActivity : AppCompatActivity() {
         val lp = b.playerFrame.layoutParams
         lp.height = if (on) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
         b.playerFrame.layoutParams = lp
-        b.playerFrame.resizeMode = if (on) AspectRatioFrameLayout.RESIZE_MODE_FIT else AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+        // En pantalla completa el marco ocupa toda la pantalla (FILL) y es el PlayerView
+        // quien ajusta y centra el vídeo; con FIT el marco se encogía y quedaba a la izquierda.
+        b.playerFrame.resizeMode = if (on) AspectRatioFrameLayout.RESIZE_MODE_FILL else AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+        b.playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         WindowCompat.setDecorFitsSystemWindows(window, !on)
         b.root.fitsSystemWindows = !on
@@ -258,7 +261,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         b.playerView.useController = !isInPictureInPictureMode
-        if (isInPictureInPictureMode) b.details.visibility = View.GONE else applyFullscreenLayout(fullscreen)
+        if (isInPictureInPictureMode) applyFullscreenLayout(true) else applyFullscreenLayout(fullscreen)
     }
 
     override fun onDestroy() {

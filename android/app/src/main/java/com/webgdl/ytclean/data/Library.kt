@@ -129,9 +129,6 @@ class Library(context: Context) {
                 channelUrl = o.optString("channelUrl").ifBlank { null },
                 thumbnail = o.optString("thumbnail").ifBlank { null },
                 durationSeconds = o.optLong("duration", -1),
-                views = -1,
-                uploaded = null,
-                isLive = false,
             )
         }
 

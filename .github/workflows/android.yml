@@ -27,7 +27,7 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - name: Versión
-        run: echo "YC_VERSION_NAME=0.4.0-${{ github.run_number }}" >> "$GITHUB_ENV"
+        run: echo "YC_VERSION_NAME=0.5.0-${{ github.run_number }}" >> "$GITHUB_ENV"
       - name: Preparar la clave de firma
         env:
           KEYSTORE_B64: ${{ secrets.YC_KEYSTORE_BASE64 }}
@@ -68,8 +68,9 @@ jobs:
       - name: Renombrar
         run: |
           mkdir -p out
-          cp android/app/build/outputs/apk/release/app-release.apk "out/YTClean-${YC_VERSION_NAME}.apk"
-          ls -la out
+          # Nombre fijo: el enlace releases/latest/download/YTClean.apk no cambia entre versiones.
+          cp android/app/build/outputs/apk/release/app-release.apk out/YTClean.apk
+          echo "::notice title=APK::YTClean ${YC_VERSION_NAME}: $(du -h out/YTClean.apk | cut -f1)"
       - uses: actions/upload-artifact@v4
         with:
           name: YTClean-apk

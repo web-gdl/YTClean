@@ -24,14 +24,14 @@ import kotlin.math.abs
 /** Vídeo en una lista (búsqueda, canal, guardados). */
 data class VideoItem(
     val url: String,
-    val title: String,
-    val channel: String,
-    val channelUrl: String?,
-    val thumbnail: String?,
-    val durationSeconds: Long,
-    val views: Long,
-    val uploaded: String?,
-    val isLive: Boolean,
+    val title: String = "",
+    val channel: String = "",
+    val channelUrl: String? = null,
+    val thumbnail: String? = null,
+    val durationSeconds: Long = -1,
+    val views: Long = -1,
+    val uploaded: String? = null,
+    val isLive: Boolean = false,
     val isShort: Boolean = false,
     /** Fecha de publicación (ms) cuando se conoce; para ordenar el feed. */
     val uploadedAt: Long = -1,

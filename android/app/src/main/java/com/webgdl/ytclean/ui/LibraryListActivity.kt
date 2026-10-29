@@ -47,11 +47,7 @@ class LibraryListActivity : AppCompatActivity() {
         b.actions.visibility = View.VISIBLE
         b.actionPrimary.text = "Reproducir todo"
         b.actionPrimary.setOnClickListener { playAll(shuffle = false) }
-        b.actionSecondary.text = when (mode) {
-            MODE_HISTORY -> "Borrar historial"
-            MODE_PLAYLIST -> "Aleatorio"
-            else -> "Aleatorio"
-        }
+        b.actionSecondary.text = if (mode == MODE_HISTORY) "Borrar historial" else "Aleatorio"
         b.actionSecondary.setOnClickListener {
             if (mode == MODE_HISTORY) {
                 MaterialAlertDialogBuilder(this).setMessage("¿Borrar el historial?")
@@ -83,11 +79,8 @@ class LibraryListActivity : AppCompatActivity() {
         startActivity(Intent(this, PlayerActivity::class.java))
     }
 
-    private fun removeAction(item: VideoItem): Pair<String, () -> Unit>? = when (mode) {
-        MODE_PLAYLIST -> "Quitar de esta lista" to { library.removeFromPlaylist(playlist, item.url); refresh() }
-        MODE_SAVED -> null
-        else -> null
-    }
+    private fun removeAction(item: VideoItem): Pair<String, () -> Unit>? =
+        if (mode == MODE_PLAYLIST) "Quitar de esta lista" to { library.removeFromPlaylist(playlist, item.url); refresh() } else null
 
     companion object {
         const val EXTRA_MODE = "mode"

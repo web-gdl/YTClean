@@ -14,13 +14,8 @@
     <string name="retry">Reintentar</string>
     <string name="more">Mostrar más</string>
     <string name="less">Mostrar menos</string>
-    <string name="saved_empty">Todavía no has guardado vídeos. Mantén pulsado un vídeo o usa «Guardar» al verlo.</string>
     <string name="live">EN DIRECTO</string>
     <string name="subscribers">%1$s suscriptores</string>
     <string name="views">%1$s visualizaciones</string>
-    <string name="settings_quality">Calidad máxima de vídeo</string>
-    <string name="settings_audio">Reproducir solo audio por defecto</string>
-    <string name="settings_clear">Borrar guardados y ajustes</string>
-    <string name="settings_cleared">Datos borrados</string>
     <string name="about">YT Clean no tiene anuncios, cuentas, analítica ni telemetría. Los vídeos se obtienen directamente de YouTube desde este teléfono (con NewPipeExtractor): YouTube ve tu dirección IP, nada más. No está afiliado a YouTube ni a Google.</string>
 </resources>
