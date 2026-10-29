@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pantallas anchas en horizontal (autoestéreo 8227L: 1024x534 dp): cuadrícula de 4. -->
+    <integer name="video_columns">4</integer>
+</resources>

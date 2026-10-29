@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Reproductor en pantallas anchas en horizontal (autoestéreo alps 8227L, 1024x534 dp):
+  vídeo de 660x371 con sus acciones y la cola debajo (izquierda) y los datos del vídeo a la
+  derecha, sin desplazar nada para llegar a las acciones. Mismos IDs que el layout vertical.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="660dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.media3.ui.AspectRatioFrameLayout
+            android:id="@+id/playerFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            app:resize_mode="fixed_width">
+
+            <ImageView
+                android:id="@+id/artwork"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/playerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:resize_mode="fit"
+                app:show_buffering="when_playing"
+                app:show_subtitle_button="true"
+                app:use_artwork="false" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+        </androidx.media3.ui.AspectRatioFrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp">
+
+            <!-- Barra fija: todas las acciones a la vista, sin desplazamiento lateral. -->
+            <LinearLayout
+                android:id="@+id/actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="-6dp"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    style="@style/Widget.YTClean.PlayerAction"
+                    android:checkable="true"
+                    android:text="@string/save"
+                    app:icon="@drawable/ic_bookmark_outline" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnQuality"
+                    style="@style/Widget.YTClean.PlayerAction"
+                    android:text="@string/quality"
+                    app:icon="@drawable/ic_tune" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAudio"
+                    style="@style/Widget.YTClean.PlayerAction"
+                    android:checkable="true"
+                    android:text="@string/audio_short"
+                    app:icon="@drawable/ic_headphones" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDownload"
+                    style="@style/Widget.YTClean.PlayerAction"
+                    android:text="@string/download"
+                    app:icon="@drawable/ic_download" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMore"
+                    style="@style/Widget.YTClean.PlayerAction"
+                    android:contentDescription="@string/more_actions"
+                    android:text="@string/more_short"
+                    app:icon="@drawable/ic_more" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/queueRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrev"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="◀ Anterior" />
+
+                <TextView
+                    android:id="@+id/queueInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackground"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:padding="6dp"
+                    android:textColor="@color/fg_muted" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNext"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Siguiente ▶" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/details"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:id="@+id/error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textColor="?attr/colorError"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/retry"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retry"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/notice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/accent"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleLarge" />
+
+            <TextView
+                android:id="@+id/meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/fg_muted" />
+
+            <TextView
+                android:id="@+id/channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="6dp"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="@color/accent" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:autoLink="web"
+                android:maxLines="4"
+                android:textIsSelectable="true" />
+
+            <TextView
+                android:id="@+id/descriptionToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="6dp"
+                android:text="@string/more"
+                android:textColor="@color/accent" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

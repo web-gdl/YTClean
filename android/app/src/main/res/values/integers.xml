@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Columnas de las listas de vídeos (1 en el teléfono). -->
+    <integer name="video_columns">1</integer>
+</resources>

@@ -35,6 +35,15 @@ Mantén pulsado cualquier vídeo para ver todas sus acciones.
   <img src="docs/img/biblioteca.png" width="200" alt="Biblioteca">
 </p>
 
+### En el autoestéreo (alps 8227L, 1024×600)
+
+En pantallas anchas en horizontal la app cambia sola de diseño: riel de navegación a la izquierda, cuadrícula de 4 columnas y reproductor en dos paneles.
+
+<p align="center">
+  <img src="docs/img/8227l-buscar.png" width="420" alt="Búsqueda en el autoestéreo">
+  <img src="docs/img/8227l-reproductor.png" width="420" alt="Reproductor en el autoestéreo">
+</p>
+
 ## Privacidad
 
 - Sin anuncios, cuentas, analítica, telemetría, píxeles ni identificadores propios. No hay ningún servidor de YT Clean.

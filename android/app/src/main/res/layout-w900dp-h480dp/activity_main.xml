@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pantallas anchas en horizontal (autoestéreo alps 8227L: área de 1024x534 dp con 1 dp = 1 px):
+  riel de navegación a la izquierda en lugar de la barra inferior (ahorra 80 dp de alto)
+  y listas en cuadrícula (res/values-w900dp-h480dp/integers.xml). Mismos IDs que el layout vertical.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="horizontal">
+
+    <com.google.android.material.navigationrail.NavigationRailView
+        android:id="@+id/bottomNav"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav"
+        app:menuGravity="center"
+        tools:viewBindingType="com.google.android.material.navigation.NavigationBarView" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            app:title="@string/app_name" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- Buscar -->
+            <LinearLayout
+                android:id="@+id/paneHome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/searchLayout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:hint="@string/search_hint"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/searchInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="@string/empty_home"
+                    android:textColor="@color/fg_muted" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="16dp" />
+            </LinearLayout>
+
+            <!-- Suscripciones -->
+            <LinearLayout
+                android:id="@+id/paneSubs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/subsProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/subsMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:textColor="@color/fg_muted"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="16dp" />
+            </LinearLayout>
+
+            <!-- Biblioteca -->
+            <ScrollView
+                android:id="@+id/paneLibrary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="560dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libSaved"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Guardados" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libPlaylists"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Listas de reproducción" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libChannels"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Canales suscritos" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libHistory"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Historial" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libDownloads"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Descargas" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/libNowPlaying"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Reproduciendo ahora"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/about"
+                        android:textColor="@color/fg_muted" />
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

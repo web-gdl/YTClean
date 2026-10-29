@@ -3,7 +3,7 @@ package com.webgdl.ytclean.ui
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.webgdl.ytclean.data.Feed
 import com.webgdl.ytclean.data.VideoItem
@@ -32,7 +32,8 @@ class FeedController(
     private var loadingMore = false
 
     init {
-        list.layoutManager = LinearLayoutManager(list.context)
+        // 1 columna en el teléfono; cuadrícula en pantallas anchas (res/values-w900dp-h480dp).
+        list.layoutManager = GridLayoutManager(list.context, list.resources.getInteger(com.webgdl.ytclean.R.integer.video_columns))
         list.adapter = adapter
         list.onNearEnd { loadMore() }
     }

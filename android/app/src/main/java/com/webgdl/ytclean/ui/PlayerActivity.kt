@@ -48,6 +48,10 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var manager: PlaybackManager
     private lateinit var library: Library
     private var fullscreen = false
+    /** Diseño de dos paneles (pantallas anchas en horizontal, p. ej. el autoestéreo 8227L). */
+    private var wide = false
+    private val hiddenForFullscreen = mutableListOf<Pair<View, Int>>()
+    private val resizedForFullscreen = mutableListOf<Pair<View, ViewGroup.LayoutParams>>()
     private var descriptionExpanded = false
     private var shownInfoFor: String? = null
     private val bufferingListener = object : Player.Listener {
@@ -60,6 +64,7 @@ class PlayerActivity : AppCompatActivity() {
         b = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(b.root)
         manager = PlaybackManager.get(this)
+        wide = resources.getBoolean(R.bool.wide_layout)
         library = Library(this)
         b.playerFrame.setAspectRatio(16f / 9f)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -98,7 +103,8 @@ class PlayerActivity : AppCompatActivity() {
         })
 
         lifecycleScope.launch { manager.state.collect { render(it) } }
-        handleIntent(intent)
+        // Tras recrear la actividad (cambio de diseño) el vídeo ya está sonando.
+        if (savedInstanceState == null || manager.state.value.current == null) handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -267,10 +273,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun applyFullscreenLayout(on: Boolean) {
-        b.details.visibility = if (on) View.GONE else View.VISIBLE
-        val lp = b.playerFrame.layoutParams
-        lp.height = if (on) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
-        b.playerFrame.layoutParams = lp
+        expandPlayer(on)
         // En pantalla completa el marco ocupa toda la pantalla (FILL) y es el PlayerView
         // quien ajusta y centra el vídeo; con FIT el marco se encogía y quedaba a la izquierda.
         b.playerFrame.resizeMode = if (on) AspectRatioFrameLayout.RESIZE_MODE_FILL else AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
@@ -286,9 +289,49 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Pantalla completa válida para los dos diseños: desde el marco del vídeo hasta la raíz,
+     * oculta los hermanos y estira cada contenedor; al salir restaura lo guardado.
+     */
+    private fun expandPlayer(on: Boolean) {
+        if (on) {
+            if (resizedForFullscreen.isNotEmpty()) return
+            var child: View = b.playerFrame
+            while (child !== b.root) {
+                val parent = child.parent as ViewGroup
+                for (i in 0 until parent.childCount) {
+                    val v = parent.getChildAt(i)
+                    if (v !== child) {
+                        hiddenForFullscreen += v to v.visibility
+                        v.visibility = View.GONE
+                    }
+                }
+                val lp = child.layoutParams
+                resizedForFullscreen += child to (if (lp is LinearLayout.LayoutParams) LinearLayout.LayoutParams(lp) else ViewGroup.LayoutParams(lp))
+                lp.width = ViewGroup.LayoutParams.MATCH_PARENT
+                lp.height = ViewGroup.LayoutParams.MATCH_PARENT
+                if (lp is LinearLayout.LayoutParams) lp.weight = 0f
+                child.layoutParams = lp
+                child = parent
+            }
+        } else {
+            hiddenForFullscreen.forEach { (v, visibility) -> v.visibility = visibility }
+            hiddenForFullscreen.clear()
+            resizedForFullscreen.forEach { (v, lp) -> v.layoutParams = lp }
+            resizedForFullscreen.clear()
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (isInPictureInPictureMode) return
+        // Si cambia el diseño que corresponde (tableta que gira), se recrea con el otro layout.
+        if (resources.getBoolean(R.bool.wide_layout) != wide) {
+            recreate()
+            return
+        }
+        // En el diseño ancho ya se está en horizontal: la pantalla completa solo es manual.
+        if (wide) return
         val landscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
         if (landscape != fullscreen) {
             fullscreen = landscape

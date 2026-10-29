@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 0.7.0 — 2026-10-29
+
+- Android: **diseño para pantallas anchas en horizontal**, pensado para autoestéreos alps **8227L** (área de 1024×534 dp con 1 dp = 1 px); también se aplica a tabletas en horizontal (≥ 900×480 dp, `res/*-w900dp-h480dp`).
+  - Navegación en un **riel lateral** en lugar de la barra inferior (gana 80 dp de alto) y listas de vídeos en **cuadrícula de 4 columnas**.
+  - **Reproductor en dos paneles**: vídeo de 660×371 con la barra de acciones y la cola debajo, y título, canal y descripción a la derecha. Todo a la vista sin desplazar; la pantalla completa se activa con su botón.
+- Iconos vectoriales propios para Buscar, Suscripciones y Biblioteca.
+
 ## 0.6.0 — 2026-10-29
 
 - Android: nueva **barra de acciones del reproductor**. Sustituye la fila de botones que había que deslizar (muchos usuarios no veían «Descargar», «A una lista» ni «Compartir») por cinco acciones fijas con icono y texto, todas visibles: Guardar · Calidad · Audio · Descargar · Más. «Más» abre una hoja inferior con Añadir a una lista, Compartir, Ver la cola e Ir al canal. Guardado y Solo audio se marcan con el color de acento cuando están activos.
