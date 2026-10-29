@@ -1,0 +1,112 @@
+{
+  "$comment": "Inventario de conexiones externas de YouTube Clean. scripts/check-connections.mjs comprueba que el código y el resultado de compilación solo mencionan estos hosts. Los hosts que dependen de la configuración del usuario no pueden aparecer en el código y se describen aparte.",
+  "version": 1,
+  "hosts": [
+    {
+      "host": "www.youtube-nocookie.com",
+      "kind": "embed",
+      "when": "Solo cuando pulsas ▶ en la fachada de un vídeo o abres una lista en el reproductor oficial.",
+      "data": "Tu dirección IP, el ID del vídeo o lista, el origen de esta página (solo el origen, sin ruta) y los parámetros del reproductor (subtítulos, idioma, segundo de inicio). El reproductor oficial de YouTube corre dentro de un iframe en su propio origen: puede guardar datos en ese origen y cargar recursos de Google; esta aplicación no puede controlarlo ni auditarlo."
+    },
+    {
+      "host": "i.ytimg.com",
+      "kind": "image",
+      "when": "Miniaturas de vídeos con el proveedor YouTube Data API y en el modo de enlace directo, si las miniaturas están activadas (Ajustes).",
+      "data": "Tu dirección IP y el ID del vídeo. No se envía referrer."
+    },
+    {
+      "host": "yt3.ggpht.com",
+      "kind": "image",
+      "when": "Avatar del canal en la página de un canal con el proveedor YouTube Data API, si las miniaturas están activadas.",
+      "data": "Tu dirección IP y el identificador de la imagen. No se envía referrer."
+    },
+    {
+      "host": "www.googleapis.com",
+      "kind": "api",
+      "when": "Solo si eliges el proveedor «YouTube Data API» y realizas una búsqueda o abres un vídeo, canal o lista.",
+      "data": "Tu dirección IP, el texto buscado o los IDs consultados y tu clave de API (que Google asocia a tu proyecto). Sin cookies ni referrer."
+    },
+    {
+      "host": "www.youtube.com",
+      "kind": "link",
+      "when": "Nunca de forma automática. Solo si pulsas el enlace «Ver en YouTube» o un enlace de ayuda.",
+      "data": "Lo que YouTube recoja al visitarlo en tu navegador; la aplicación no envía referrer."
+    },
+    {
+      "host": "developers.google.com",
+      "kind": "link",
+      "when": "Enlace de ayuda en Ajustes (documentación de la Data API). Solo al pulsarlo.",
+      "data": "Ninguno enviado por la aplicación."
+    },
+    {
+      "host": "console.cloud.google.com",
+      "kind": "link",
+      "when": "Enlace de ayuda en Ajustes para crear una clave de API. Solo al pulsarlo.",
+      "data": "Ninguno enviado por la aplicación."
+    },
+    {
+      "host": "docs.invidious.io",
+      "kind": "link",
+      "when": "Enlace de ayuda en Ajustes y en Privacidad. Solo al pulsarlo.",
+      "data": "Ninguno enviado por la aplicación."
+    },
+    {
+      "host": "api.invidious.io",
+      "kind": "link",
+      "when": "Enlace de ayuda en Ajustes (lista pública de instancias). Solo al pulsarlo; la aplicación no consulta esta lista por sí misma.",
+      "data": "Ninguno enviado por la aplicación."
+    },
+    {
+      "host": "github.com",
+      "kind": "link",
+      "when": "Enlaces de ayuda (lista de instancias de Piped, código fuente). Solo al pulsarlos.",
+      "data": "Ninguno enviado por la aplicación."
+    },
+    {
+      "host": "docs.piped.video",
+      "kind": "link",
+      "when": "Solo aparece en comentarios del código fuente (documentación de la API de Piped). Nunca se contacta.",
+      "data": "Ninguno."
+    },
+    {
+      "host": "react.dev",
+      "kind": "link",
+      "when": "Aparece dentro del código de React (enlaces en mensajes de error de la consola del navegador). Nunca se solicita automáticamente.",
+      "data": "Ninguno enviado por la aplicación."
+    }
+  ],
+  "userConfigured": [
+    {
+      "name": "Instancia de Invidious elegida por ti",
+      "kind": "api+image",
+      "when": "Solo si eliges el proveedor «Invidious»: búsquedas, vídeos, canales, listas y miniaturas (la instancia reenvía las miniaturas, así que no se contacta con Google para ellas).",
+      "data": "Tu dirección IP, el texto buscado y los IDs consultados. El operador de la instancia puede registrarlos; no es un servicio anónimo."
+    },
+    {
+      "name": "Instancia de Piped elegida por ti",
+      "kind": "api+image",
+      "when": "Solo si eliges el proveedor «Piped»: búsquedas, vídeos, canales, listas y miniaturas (reenviadas por el proxy de la instancia).",
+      "data": "Tu dirección IP, el texto buscado y los IDs consultados. El operador de la instancia puede registrarlos; no es un servicio anónimo."
+    }
+  ],
+  "storage": [
+    {
+      "where": "localStorage de este origen, claves con prefijo «yc:»",
+      "what": "Ajustes (proveedor, clave de API o instancia, tema, miniaturas, subtítulos, historial), vídeos guardados y, solo si lo activas, el historial de reproducción.",
+      "when": "Solo cuando cambias un ajuste, guardas un vídeo o activas el historial. Una visita sin interacción no escribe nada.",
+      "delete": "Ajustes → «Borrar todos los datos locales», o borrando los datos del sitio en el navegador."
+    },
+    {
+      "where": "Origen www.youtube-nocookie.com (dentro del iframe del reproductor)",
+      "what": "Lo que decida el reproductor oficial de YouTube (preferencias de reproducción, identificadores). Fuera del control de esta aplicación.",
+      "when": "Al reproducir un vídeo.",
+      "delete": "Borrando los datos de ese sitio en el navegador."
+    }
+  ],
+  "cookies": "La aplicación no crea ninguna cookie. No puede impedir las que el reproductor oficial gestione en su propio origen.",
+  "nunca": [
+    "Analítica, píxeles, scripts de terceros, fuentes externas.",
+    "Identificadores propios, perfiles, cuentas, sincronización.",
+    "Envío de búsquedas, historial o ajustes a servidores propios: no existe servidor propio."
+  ]
+}

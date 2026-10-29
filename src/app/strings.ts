@@ -1,0 +1,215 @@
+// Textos de la interfaz (español). Mantenerlos en un único archivo facilita
+// traducir la aplicación sin tocar los componentes.
+export const S = {
+  appName: 'YouTube Clean',
+  tagline: 'Vídeos públicos de YouTube. Sin anuncios propios, sin rastreo propio, sin cuentas.',
+  skipToContent: 'Saltar al contenido',
+
+  nav: {
+    home: 'Inicio',
+    saved: 'Guardados',
+    settings: 'Ajustes',
+    privacy: 'Privacidad',
+  },
+
+  search: {
+    label: 'Buscar vídeos o pegar un enlace de YouTube',
+    placeholder: 'Buscar o pegar un enlace…',
+    button: 'Buscar',
+    noProvider: 'Para buscar necesitas elegir una fuente de datos en Ajustes. Pegar un enlace de YouTube funciona sin configurar nada.',
+    noProviderAction: 'Elegir fuente de datos',
+    resultsFor: (q: string) => `Resultados para «${q}»`,
+    empty: 'No se encontraron vídeos.',
+    loadMore: 'Cargar más resultados',
+    loading: 'Buscando…',
+    query: 'Búsqueda',
+  },
+
+  home: {
+    title: 'Un reproductor tranquilo',
+    intro:
+      'Escribe lo que buscas o pega un enlace de YouTube. No hay tendencias, recomendaciones ni anuncios añadidos por esta aplicación.',
+    howItWorks: 'Cómo funciona',
+    points: [
+      'Las búsquedas y los metadatos salen de la fuente de datos que elijas en Ajustes (YouTube Data API con tu propia clave, o una instancia de Invidious o Piped). Hasta entonces, no se contacta con ningún servicio.',
+      'El vídeo se reproduce con el reproductor oficial de YouTube en modo de privacidad mejorada (youtube-nocookie.com), y solo se carga cuando pulsas ▶.',
+      'Nada se guarda en tu navegador hasta que cambias un ajuste, guardas un vídeo o activas el historial. No hay cuentas ni sincronización.',
+    ],
+    directLink: 'Pega un enlace para reproducirlo sin configurar nada:',
+    directLinkButton: 'Abrir enlace',
+    invalidLink: 'No parece un enlace ni un ID de YouTube.',
+  },
+
+  video: {
+    play: 'Reproducir',
+    untitled: 'Vídeo de YouTube',
+    playAria: (title: string) => `Reproducir «${title}» con el reproductor de YouTube`,
+    facadeNote: 'Al pulsar se cargará el reproductor oficial de YouTube (youtube-nocookie.com) y YouTube recibirá tu dirección IP.',
+    facadeNoteShort: 'Al reproducir, YouTube recibirá tu dirección IP.',
+    openOnYouTube: 'Ver en YouTube',
+    channel: 'Canal',
+    moreFromChannel: 'Más vídeos de este canal',
+    description: 'Descripción',
+    showDescription: 'Mostrar descripción',
+    hideDescription: 'Ocultar descripción',
+    views: 'visualizaciones',
+    published: 'Publicado',
+    duration: 'Duración',
+    live: 'En directo',
+    save: 'Guardar',
+    unsave: 'Quitar de guardados',
+    saved: 'Guardado',
+    copyLink: 'Copiar enlace',
+    linkCopied: 'Enlace copiado',
+    metadataFailed: 'No se pudieron cargar los datos del vídeo. El reproductor funciona igualmente.',
+    notEmbeddable: 'El propietario no permite insertar este vídeo fuera de YouTube. Puedes verlo en YouTube.',
+    ageRestricted: 'Este vídeo tiene restricción de edad: YouTube exige iniciar sesión para verlo. Esta aplicación no usa cuentas.',
+    private: 'Este vídeo es privado.',
+    unavailable: 'Este vídeo no está disponible (eliminado, privado o inexistente).',
+    regionNote: 'Este vídeo tiene restricciones geográficas en algunos países; si no se reproduce, puede ser por eso.',
+    playlistMode: 'Lista en el reproductor oficial',
+    playlistModeNote: 'El reproductor de YouTube gestiona la lista completa (siguiente, anterior).',
+    captionsHint: 'Los subtítulos, la velocidad y la calidad se eligen en los controles del propio reproductor.',
+    startAt: (t: string) => `Empieza en ${t}`,
+  },
+
+  channel: {
+    title: 'Canal',
+    videos: 'Vídeos',
+    subscribers: 'suscriptores',
+    loadMore: 'Cargar más vídeos',
+    empty: 'Este canal no tiene vídeos públicos.',
+    openOnYouTube: 'Ver canal en YouTube',
+  },
+
+  playlist: {
+    title: 'Lista',
+    items: 'vídeos',
+    playAll: 'Reproducir toda la lista',
+    loadMore: 'Cargar más',
+    empty: 'La lista está vacía o no es pública.',
+  },
+
+  saved: {
+    title: 'Guardados',
+    intro: 'Los vídeos guardados se almacenan solo en este navegador.',
+    empty: 'Todavía no has guardado ningún vídeo.',
+    history: 'Historial',
+    historyOff: 'El historial está desactivado (Ajustes). Mientras esté desactivado no se guarda nada.',
+    historyEmpty: 'El historial está vacío.',
+    clearHistory: 'Borrar historial',
+    clearSaved: 'Borrar guardados',
+    confirmClear: '¿Borrar? Esta acción no se puede deshacer.',
+  },
+
+  settings: {
+    title: 'Ajustes',
+    intro: 'Todo se guarda únicamente en este navegador y solo cuando cambias algo.',
+    providerSection: 'Fuente de datos',
+    providerIntro:
+      'Las búsquedas y los datos de vídeos, canales y listas necesitan una fuente. Elige una; cada una tiene implicaciones distintas de privacidad y fiabilidad.',
+    provider: {
+      none: 'Ninguna (solo enlaces directos)',
+      noneNote: 'No se contacta con ningún servicio de datos. Puedes pegar enlaces de vídeos y listas; no hay búsqueda ni páginas de canal.',
+      youtube: 'YouTube Data API v3 (clave propia)',
+      youtubeNote:
+        'Método oficial y estable. Las consultas van directamente a Google (www.googleapis.com) con tu clave: Google ve tu IP, tus búsquedas y tu proyecto. Cuota gratuita: 10 000 unidades al día; cada búsqueda cuesta 100 (≈ 95 búsquedas diarias). Las miniaturas se cargan desde i.ytimg.com.',
+      invidious: 'Instancia de Invidious',
+      invidiousNote:
+        'Un servidor intermedio de terceros consulta YouTube por ti: Google ve la IP de la instancia, pero la instancia ve la tuya y tus búsquedas. No es anónimo. Las instancias públicas fallan con frecuencia (YouTube las bloquea); los datos de vídeo pueden faltar aunque la búsqueda funcione.',
+      piped: 'Instancia de Piped',
+      pipedNote:
+        'Igual que Invidious: la instancia ve tu IP y tus búsquedas; Google ve la de la instancia. Fiabilidad variable.',
+    },
+    apiKey: 'Clave de API de YouTube Data API',
+    apiKeyHelp: 'Crea una clave en Google Cloud (API «YouTube Data API v3») y restríngela por sitio web (referrer HTTP). Se guarda solo en este navegador.',
+    apiKeyLinkConsole: 'Crear clave en Google Cloud',
+    apiKeyLinkDocs: 'Documentación de la Data API',
+    instanceUrl: 'URL de la instancia',
+    instanceHelpInvidious: 'Ejemplo: https://invidious.ejemplo.org — lista pública de instancias en api.invidious.io.',
+    instanceHelpPiped: 'Ejemplo: https://pipedapi.ejemplo.org (la URL de la API, no la de la web) — lista en el wiki de Piped.',
+    instanceLinkInvidious: 'Lista de instancias de Invidious',
+    instanceLinkPiped: 'Lista de instancias de Piped',
+    instanceInvalid: 'La URL debe empezar por https://',
+    testProvider: 'Probar la fuente',
+    testing: 'Probando…',
+    testOk: 'La fuente responde correctamente.',
+
+    appearanceSection: 'Apariencia',
+    theme: 'Tema',
+    themeSystem: 'Como el sistema',
+    themeLight: 'Claro',
+    themeDark: 'Oscuro',
+    thumbnails: 'Miniaturas',
+    thumbnailsHelp: 'Cada miniatura es una petición a i.ytimg.com (Google) o a la instancia elegida. Puedes desactivarlas.',
+    thumbnailsShow: 'Mostrar',
+    thumbnailsHide: 'No cargar',
+
+    playerSection: 'Reproductor',
+    captions: 'Activar subtítulos al reproducir, si existen',
+    uiLanguage: 'Idioma de los controles del reproductor',
+
+    dataSection: 'Datos locales',
+    history: 'Guardar historial de reproducción en este navegador',
+    historyHelp: 'Desactivado por defecto. Nunca se envía a ningún sitio.',
+    clearAll: 'Borrar todos los datos locales',
+    clearAllHelp: 'Elimina ajustes, guardados e historial de este navegador. No afecta a lo que el reproductor de YouTube haya guardado en su propio origen.',
+    cleared: 'Datos locales borrados.',
+    saveNote: 'Los cambios se aplican y guardan al instante.',
+  },
+
+  privacy: {
+    title: 'Privacidad y conexiones',
+    intro:
+      'Esta página describe exactamente qué sale de tu navegador y cuándo. Está generada a partir del mismo inventario (docs/conexiones.json) que verifica la compilación.',
+    principles: 'Principios',
+    principlesList: [
+      'Ningún servidor propio: la aplicación es un sitio estático. No hay analítica, píxeles, cookies ni identificadores propios.',
+      'Ninguna conexión hasta que la pides: la búsqueda necesita una fuente que tú eliges; el reproductor se carga al pulsar ▶.',
+      'Almacenamiento local mínimo: solo lo que cambias o guardas, con un botón para borrarlo todo.',
+      'Sin cuentas, sin sincronización, sin notificaciones, sin procesos en segundo plano.',
+    ],
+    connections: 'Conexiones posibles',
+    userConfigured: 'Servicios que configuras tú',
+    storage: 'Almacenamiento en el navegador',
+    cookies: 'Cookies',
+    never: 'Lo que nunca hace',
+    limits: 'Límites que conviene conocer',
+    limitsList: [
+      'El reproductor oficial de YouTube corre dentro de un iframe de youtube-nocookie.com. El modo de privacidad mejorada reduce el seguimiento, pero Google recibe tu IP, el ID del vídeo y el origen de la página, y puede mostrar sus propios anuncios dentro del vídeo. Esta aplicación no inserta anuncios, pero no puede eliminar los de YouTube.',
+      'Las instancias de Invidious o Piped son servidores de terceros: ven tu IP y tus búsquedas. Una instancia no es anonimato.',
+      'Tu navegador guarda las direcciones visitadas (incluidas las búsquedas, que van en la URL). Usa una ventana privada si no quieres que queden en el historial del navegador.',
+      'Tu proveedor de acceso a Internet y cualquier red intermedia ven los dominios a los que te conectas.',
+    ],
+    columns: { host: 'Dominio', when: 'Cuándo', data: 'Qué puede recibir' },
+    kinds: { embed: 'reproductor', image: 'imágenes', api: 'datos', link: 'solo enlace', 'api+image': 'datos e imágenes' },
+  },
+
+  status: {
+    loading: 'Cargando…',
+    retry: 'Reintentar',
+    errorTitle: 'No se pudo completar la operación',
+    errors: {
+      network: 'No hay conexión con el servicio. Comprueba tu red o la instancia elegida.',
+      'not-configured': 'No hay ninguna fuente de datos configurada.',
+      quota: 'Se agotó la cuota diaria de la clave de API. Vuelve a intentarlo mañana o usa otra fuente.',
+      auth: 'La clave de API no es válida o no está autorizada para este sitio.',
+      'not-found': 'No se encontró el contenido solicitado.',
+      unavailable: 'El servicio no pudo obtener los datos (puede que la instancia esté bloqueada por YouTube).',
+      'bad-response': 'La respuesta del servicio no tiene el formato esperado.',
+      aborted: 'Operación cancelada.',
+      unsupported: 'La fuente de datos elegida no permite esta operación.',
+    } as Record<string, string>,
+  },
+
+  notFound: {
+    title: 'Página no encontrada',
+    body: 'La dirección no corresponde a ninguna sección de la aplicación.',
+    home: 'Volver al inicio',
+  },
+
+  footer: {
+    source: 'Código fuente',
+    disclaimer: 'YouTube Clean no está afiliado a YouTube ni a Google. YouTube es una marca de Google LLC.',
+  },
+} as const;

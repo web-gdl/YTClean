@@ -1,0 +1,12 @@
+{
+  "name": "YouTube Clean",
+  "short_name": "YT Clean",
+  "description": "Vídeos públicos de YouTube sin anuncios propios, sin rastreo propio y sin cuentas.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111214",
+  "theme_color": "#111214",
+  "lang": "es",
+  "icons": [{ "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
