@@ -12,7 +12,7 @@ El inventario legible por máquina está en [`conexiones.json`](conexiones.json)
 
 ## 2. Conexiones posibles
 
-Todas las peticiones salen con `credentials: "omit"` (sin cookies ni autenticación) y `referrerPolicy: "no-referrer"`. Las imágenes externas llevan `referrerpolicy="no-referrer"`. El iframe del reproductor usa `strict-origin-when-cross-origin` (YouTube recibe el **origen** de la página, no la ruta).
+Todas las peticiones salen con `credentials: "omit"` (sin cookies ni autenticación) y `referrerPolicy: "no-referrer"`, salvo las de la Data API, que envían solo el **origen** (`strict-origin`) para que funcione la restricción de la clave por sitio web. Las imágenes externas llevan `referrerpolicy="no-referrer"`. El iframe del reproductor usa `strict-origin-when-cross-origin` (YouTube recibe el **origen** de la página, no la ruta).
 
 | Dominio | Tipo | Cuándo | Qué puede recibir |
 |---|---|---|---|

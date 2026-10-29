@@ -72,7 +72,7 @@ Para publicar, copia `dist/` a cualquier alojamiento estático; [docs/despliegue
 ## Privacidad y seguridad
 
 - Sin servidor propio, sin analítica, sin cookies, sin identificadores. Una visita sin interacción no escribe nada en el navegador.
-- Todas las peticiones salen con `credentials: "omit"` y `referrerPolicy: "no-referrer"`; las imágenes externas tampoco envían referrer.
+- Todas las peticiones salen con `credentials: "omit"` y `referrerPolicy: "no-referrer"` (la Data API, con solo el origen, por la restricción de la clave); las imágenes externas tampoco envían referrer.
 - CSP estricta en producción (`script-src 'self'`, sin código en línea, `frame-src` limitado a `youtube-nocookie.com`, `object-src 'none'`), más `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options` y otras cabeceras en `dist/_headers`.
 - `npm run check:connections` compara los dominios presentes en el código y en `dist/` con el inventario; cualquier dominio nuevo rompe la compilación.
 - Dependencias de ejecución: solo `react` y `react-dom`. Sin Tailwind, sin enrutador externo, sin librería de peticiones.

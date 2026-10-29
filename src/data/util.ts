@@ -16,10 +16,12 @@ const YT_HOSTS = new Set(['youtube.com', 'www.youtube.com', 'm.youtube.com', 'mu
 export function parseYouTubeInput(raw: string): ParsedInput | null {
   const input = raw.trim();
   if (!input) return null;
-  if (VIDEO_ID_RE.test(input)) return { kind: 'video', id: input };
+  // Un ID suelto debe parecer un ID (dígito, '-', '_' o mayúsculas y minúsculas mezcladas),
+  // para no confundir palabras de 11 letras como «programador».
+  if (VIDEO_ID_RE.test(input) && looksLikeId(input)) return { kind: 'video', id: input };
   if (CHANNEL_ID_RE.test(input)) return { kind: 'channel', id: input };
   if (/^@[A-Za-z0-9._-]{3,}$/.test(input)) return { kind: 'handle', handle: input.slice(1) };
-  if (/^(PL|UU|OL|LL|RD|FL)[A-Za-z0-9_-]{10,}$/.test(input)) return { kind: 'playlist', id: input };
+  if (/^(PL|UU|OL|RD|FL)[A-Za-z0-9_-]{10,}$/.test(input) && looksLikeId(input.slice(2))) return { kind: 'playlist', id: input };
 
   let url: URL;
   try {
@@ -44,7 +46,7 @@ export function parseYouTubeInput(raw: string): ParsedInput | null {
   if (host === 'youtu.be') return video(path.split('/')[1]);
   if (!YT_HOSTS.has(host)) return null;
 
-  if (path === '/watch') return video(q.get('v'));
+  if (path === '/watch') return video(q.get('v')) ?? (list ? { kind: 'playlist', id: list } : null);
   if (path === '/playlist' && list) return { kind: 'playlist', id: list };
   const seg = path.split('/').filter(Boolean);
   if (seg.length >= 2 && ['shorts', 'embed', 'live', 'v'].includes(seg[0] ?? '')) {
@@ -52,17 +54,21 @@ export function parseYouTubeInput(raw: string): ParsedInput | null {
     return video(seg[1]);
   }
   if (seg[0] === 'channel' && seg[1] && CHANNEL_ID_RE.test(seg[1])) return { kind: 'channel', id: seg[1] };
-  if (seg[0]?.startsWith('@')) return { kind: 'handle', handle: seg[0].slice(1) };
+  if (seg[0]?.startsWith('@') && seg[0].length > 1) return { kind: 'handle', handle: seg[0].slice(1) };
   if ((seg[0] === 'c' || seg[0] === 'user') && seg[1]) return { kind: 'handle', handle: seg[1].replace(/^@/, '') };
   if (list && seg.length === 0) return { kind: 'playlist', id: list };
   return null;
+}
+
+function looksLikeId(s: string): boolean {
+  return /[0-9_-]/.test(s) || (/[a-z]/.test(s) && /[A-Z]/.test(s.slice(1)));
 }
 
 /** "90", "1m30s", "1h2m3s" → segundos. */
 export function parseTimestamp(value: string | null | undefined): number | undefined {
   if (!value) return undefined;
   if (/^\d+$/.test(value)) return Number(value) || undefined;
-  const m = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i.exec(value);
+  const m = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/i.exec(value);
   if (!m) return undefined;
   const s = Number(m[1] ?? 0) * 3600 + Number(m[2] ?? 0) * 60 + Number(m[3] ?? 0);
   return s || undefined;
@@ -129,8 +135,12 @@ export function decodeHtmlEntities(text: string): string {
   const named: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
   return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
     const e = entity.toLowerCase();
-    if (e.startsWith('#x')) return String.fromCodePoint(parseInt(e.slice(2), 16));
-    if (e.startsWith('#')) return String.fromCodePoint(parseInt(e.slice(1), 10));
+    try {
+      if (e.startsWith('#x')) return String.fromCodePoint(parseInt(e.slice(2), 16));
+      if (e.startsWith('#')) return String.fromCodePoint(parseInt(e.slice(1), 10));
+    } catch {
+      return match;
+    }
     return named[e] ?? match;
   });
 }

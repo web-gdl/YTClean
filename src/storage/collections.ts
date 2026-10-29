@@ -20,7 +20,6 @@ const HISTORY_LIMIT = 200;
 function toSaved(v: VideoSummary): SavedVideo {
   const s: SavedVideo = { id: v.id, title: v.title, channelTitle: v.channelTitle, at: Date.now() };
   if (v.channelId) s.channelId = v.channelId;
-  if (v.thumbnailUrl) s.thumbnailUrl = v.thumbnailUrl;
   if (v.durationSeconds !== undefined) s.durationSeconds = v.durationSeconds;
   return s;
 }

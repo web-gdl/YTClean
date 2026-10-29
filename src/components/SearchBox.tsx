@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react';
 import { navigate, routes } from '../app/router';
 import { S } from '../app/strings';
 import { parseYouTubeInput } from '../data/util';
+import { getSettings } from '../storage/settings';
 
 interface Props {
   initialQuery?: string | undefined;
@@ -28,7 +29,7 @@ export function SearchBox({ initialQuery = '', autoFocus = false, compact = fals
           navigate(routes.watch(parsed.id, { ...(parsed.start ? { start: parsed.start } : {}), ...(parsed.list ? { list: parsed.list } : {}) }));
           return;
         case 'playlist':
-          navigate(routes.playlist(parsed.id));
+          navigate(getSettings().provider === 'none' ? routes.watchPlaylist(parsed.id) : routes.playlist(parsed.id));
           return;
         case 'channel':
           navigate(routes.channel(parsed.id));

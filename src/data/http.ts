@@ -9,6 +9,8 @@ export interface HttpOptions {
   signal?: AbortSignal | undefined;
   timeoutMs?: number | undefined;
   method?: 'GET' | 'POST' | 'DELETE' | undefined;
+  /** Por defecto no-referrer; la Data API necesita el origen para claves restringidas por sitio web. */
+  referrerPolicy?: ReferrerPolicy | undefined;
   headers?: Record<string, string> | undefined;
 }
 
@@ -27,13 +29,14 @@ export async function fetchJson(url: string, opts: HttpOptions = {}): Promise<un
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), opts.timeoutMs ?? 15000);
   const onAbort = () => controller.abort();
+  if (opts.signal?.aborted) controller.abort();
   opts.signal?.addEventListener('abort', onAbort, { once: true });
   try {
     const res = await fetch(url, {
       method: opts.method ?? 'GET',
       mode: 'cors',
       credentials: 'omit',
-      referrerPolicy: 'no-referrer',
+      referrerPolicy: opts.referrerPolicy ?? 'no-referrer',
       redirect: 'follow',
       cache: 'default',
       headers: { Accept: 'application/json', ...(opts.headers ?? {}) },

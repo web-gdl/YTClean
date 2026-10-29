@@ -49,7 +49,11 @@ export function parseRoute(pathname: string, search: string): Route {
     if (!m) continue;
     const params: Record<string, string> = {};
     p.keys.forEach((k, i) => {
-      params[k] = decodeURIComponent(m[i + 1] ?? '');
+      try {
+        params[k] = decodeURIComponent(m[i + 1] ?? '');
+      } catch {
+        params[k] = '';
+      }
     });
     return { name: p.name, params, query, path };
   }
@@ -97,6 +101,7 @@ export function navigate(path: string, opts: { replace?: boolean } = {}): void {
   else window.history.pushState(null, '', url);
   refresh();
   window.scrollTo({ top: 0 });
+  document.getElementById('main')?.focus({ preventScroll: true });
 }
 
 function subscribe(l: () => void) {

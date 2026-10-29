@@ -75,7 +75,11 @@ export function usePagedList<T extends { id: string }>(
     const controller = new AbortController();
     fn(undefined, controller.signal).then(
       (page) => {
-        if (!controller.signal.aborted) setResult({ key, items: page.items, nextPage: page.nextPage, error: null });
+        if (!controller.signal.aborted) {
+          const seen = new Set<string>();
+          const items = page.items.filter((x) => (seen.has(x.id) ? false : (seen.add(x.id), true)));
+          setResult({ key, items, nextPage: page.nextPage, error: null });
+        }
       },
       (e: unknown) => {
         if (!controller.signal.aborted) setResult({ key, items: [], nextPage: undefined, error: toProviderError(e) });

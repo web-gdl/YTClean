@@ -28,7 +28,7 @@ Con una instancia fija de Invidious, añade su origen a ambas variables. Con la 
 Referrer-Policy: no-referrer
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
-Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
 Cross-Origin-Opener-Policy: same-origin
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ```
@@ -47,7 +47,7 @@ server {
     add_header Referrer-Policy "no-referrer" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()" always;
     add_header Cross-Origin-Opener-Policy "same-origin" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 

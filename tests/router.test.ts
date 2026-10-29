@@ -14,6 +14,8 @@ describe('parseRoute', () => {
     expect(parseRoute('/ajustes', '').name).toBe('settings');
     expect(parseRoute('/privacidad', '').name).toBe('privacy');
     expect(parseRoute('/otra/cosa', '').name).toBe('not-found');
+    // Codificación inválida: no lanza.
+    expect(parseRoute('/ver/%E0%A4%A', '')).toMatchObject({ name: 'watch', params: { id: '' } });
   });
 });
 

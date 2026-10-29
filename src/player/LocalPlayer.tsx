@@ -16,6 +16,7 @@ interface Props {
   thumbnailUrl?: string | undefined;
   onUseOfficial: () => void;
   onVideoInfo?: ((v: VideoDetails) => void) | undefined;
+  onPlay?: (() => void) | undefined;
 }
 
 interface Source {
@@ -45,7 +46,7 @@ function formatBytes(n: number | undefined): string {
   return `${Math.round(n / 1000)} kB`;
 }
 
-export function LocalPlayer({ videoId, title, start, thumbnailUrl, onUseOfficial, onVideoInfo }: Props) {
+export function LocalPlayer({ videoId, title, start, thumbnailUrl, onUseOfficial, onVideoInfo, onPlay }: Props) {
   const settings = useSettings();
   const client = new LocalClient(settings.localServiceUrl);
   const crossOrigin = typeof window !== 'undefined' && client.base !== window.location.origin;
@@ -63,6 +64,7 @@ export function LocalPlayer({ videoId, title, start, thumbnailUrl, onUseOfficial
     try {
       const resolved = await client.resolve(videoId);
       onVideoInfo?.(resolved.video);
+      onPlay?.();
       const source = pickInitial(resolved);
       if (!source) throw toProviderError(new Error(S.local.noFormats));
       setJob(resolved.job);

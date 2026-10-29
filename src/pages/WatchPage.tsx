@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { routes, useRoute } from '../app/router';
 import { S } from '../app/strings';
 import { ExternalLink, Link } from '../components/Link';
@@ -18,6 +18,7 @@ import {
 } from '../data/util';
 import { useAsync, usePagedList } from '../hooks/useAsync';
 import { LocalPlayer } from '../player/LocalPlayer';
+import { LocalClient } from '../data/providers/local';
 import { VideoPlayer } from '../player/VideoPlayer';
 import { favorites, watchHistory } from '../storage/collections';
 import { useSettings } from '../storage/settings';
@@ -49,9 +50,6 @@ export function WatchPage() {
   const saved = favorites.useList();
   const isSaved = saved.some((s) => s.id === id);
 
-  useEffect(() => {
-    if (video) watchHistory.record(video);
-  }, [video]);
 
   if (!VIDEO_ID_RE.test(id)) return <NotFoundPage />;
   const showDescription = descriptionOpenFor === id;
@@ -68,6 +66,10 @@ export function WatchPage() {
       : undefined;
 
   const summaryForSave: VideoSummary = video ?? { id, title, channelTitle: '' };
+  // Miniatura de la fachada: nunca pedir a Google si la fuente es una instancia o el servicio local.
+  const fallbackThumb = !provider || provider.id === 'youtube-data-api' ? youtubeThumbnail(id) : provider.id === 'local' ? `${new LocalClient(settings.localServiceUrl).base}/local/thumb/${id}` : undefined;
+  const thumb = video?.thumbnailUrl ?? fallbackThumb;
+  const recordPlay = () => watchHistory.record(summaryForSave);
 
   return (
     <div className="page page--watch">
@@ -78,9 +80,10 @@ export function WatchPage() {
               videoId={id}
               title={title}
               start={start}
-              thumbnailUrl={video?.thumbnailUrl ?? youtubeThumbnail(id)}
+              thumbnailUrl={thumb}
               onUseOfficial={() => setPlayerFor({ id, mode: 'official' })}
               onVideoInfo={setLocalInfo}
+              onPlay={recordPlay}
             />
           ) : (
             <VideoPlayer
@@ -88,8 +91,9 @@ export function WatchPage() {
               title={title}
               start={start}
               list={list}
-              thumbnailUrl={video?.thumbnailUrl ?? youtubeThumbnail(id)}
+              thumbnailUrl={thumb}
               blockedMessage={blocked}
+              onPlay={recordPlay}
             />
           )}
           {playerMode === 'official' && settings.playerMode === 'local' ? (

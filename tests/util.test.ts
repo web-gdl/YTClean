@@ -31,7 +31,8 @@ describe('parseYouTubeInput', () => {
   });
   it('reconoce listas, canales y handles', () => {
     expect(parseYouTubeInput('https://www.youtube.com/playlist?list=PLabcdefghijklmnop')).toEqual({ kind: 'playlist', id: 'PLabcdefghijklmnop' });
-    expect(parseYouTubeInput('PLabcdefghijklmnop')).toEqual({ kind: 'playlist', id: 'PLabcdefghijklmnop' });
+    expect(parseYouTubeInput('PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf')).toEqual({ kind: 'playlist', id: 'PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf' });
+    expect(parseYouTubeInput('https://www.youtube.com/watch?list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf')).toEqual({ kind: 'playlist', id: 'PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf' });
     expect(parseYouTubeInput('https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw')).toEqual({ kind: 'channel', id: 'UCuAXFkgsw1L7xaCfnd5JJOw' });
     expect(parseYouTubeInput('https://www.youtube.com/@ejemplo/videos')).toEqual({ kind: 'handle', handle: 'ejemplo' });
     expect(parseYouTubeInput('@ejemplo')).toEqual({ kind: 'handle', handle: 'ejemplo' });
@@ -39,6 +40,10 @@ describe('parseYouTubeInput', () => {
   });
   it('rechaza texto corriente y dominios ajenos', () => {
     expect(parseYouTubeInput('cómo cocinar lentejas')).toBeNull();
+    // Palabras de 11 letras no son IDs de vídeo.
+    expect(parseYouTubeInput('programador')).toBeNull();
+    expect(parseYouTubeInput('PLAYGROUNDSS')).toBeNull();
+    expect(parseYouTubeInput('https://www.youtube.com/@')).toBeNull();
     expect(parseYouTubeInput('https://example.com/watch?v=dQw4w9WgXcQ')).toBeNull();
     expect(parseYouTubeInput('https://www.youtube.com/watch?v=corto')).toBeNull();
     expect(parseYouTubeInput('')).toBeNull();
@@ -50,6 +55,7 @@ describe('parseTimestamp', () => {
     expect(parseTimestamp('90')).toBe(90);
     expect(parseTimestamp('1h2m3s')).toBe(3723);
     expect(parseTimestamp('2m')).toBe(120);
+    expect(parseTimestamp('1m30')).toBe(90);
     expect(parseTimestamp('0')).toBeUndefined();
     expect(parseTimestamp('abc')).toBeUndefined();
     expect(parseTimestamp(null)).toBeUndefined();
@@ -85,6 +91,7 @@ describe('decodeHtmlEntities', () => {
   it('decodifica entidades con nombre y numéricas', () => {
     expect(decodeHtmlEntities('Tom &amp; Jerry &#39;live&#39; &quot;ok&quot; &#x41;')).toBe('Tom & Jerry \'live\' "ok" A');
     expect(decodeHtmlEntities('sin entidades')).toBe('sin entidades');
+    expect(decodeHtmlEntities('mal &#1114112; código')).toBe('mal &#1114112; código');
   });
 });
 

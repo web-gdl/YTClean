@@ -14,7 +14,8 @@ function mockFetch(route: Route) {
     const url = new URL(String(input));
     calls.push(url);
     expect(init?.credentials).toBe('omit');
-    expect(init?.referrerPolicy).toBe('no-referrer');
+    // La Data API envía solo el origen (restricción de clave por sitio web); el resto, nada.
+    expect(init?.referrerPolicy).toBe(url.hostname === 'www.googleapis.com' ? 'strict-origin' : 'no-referrer');
     const res = route(url);
     return Promise.resolve(new Response(JSON.stringify(res.body), { status: res.status ?? 200, headers: { 'content-type': 'application/json' } }));
   });

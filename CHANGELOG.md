@@ -7,6 +7,7 @@
 - Nuevo proveedor «Servicio local (yt-dlp)» y ajustes de dirección del servicio, modo de reproductor y caché.
 - CSP: `media-src 'self'` (antes `'none'`). Inventario y página de privacidad actualizados con el servicio local.
 - Pruebas: servicio local completo con yt-dlp simulado (sin red), proveedor y reproductor local. 64 pruebas unitarias.
+- Correcciones de la revisión independiente: la Data API envía solo el origen como referrer (las claves restringidas por sitio web fallaban); la fachada ya no pide miniaturas a Google con Invidious/Piped/servicio local; palabras de 11 letras («programador») ya no se toman por IDs; rutas con codificación inválida y errores de render no dejan la pantalla en blanco (ErrorBoundary); `color-scheme` sigue al tema forzado; el historial se registra al reproducir (también en modo enlace directo); guardados sin URL de miniatura persistida; deduplicación de la primera página; listas en `watch?list=`; errores 403/429 con mensajes correctos; `<noscript>` sin estilo en línea; sin `interest-cohort` en Permissions-Policy; foco al cambiar de página; Node ≥ 20.19.
 - Correcciones menores: entrada de enlace directo sin validación `type=url`; respaldo de `color-mix` y `:has` para navegadores antiguos.
 
 ## 0.1.0 — 2026-10-29

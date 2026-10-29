@@ -32,7 +32,8 @@ export class YouTubeDataApiProvider implements DataProvider {
   private async call(method: string, params: Record<string, string | number | undefined>, opts?: RequestOptions): Promise<Record<string, unknown>> {
     const url = buildUrl(`${API}/${method}`, { ...params, key: this.apiKey });
     try {
-      return asRecord(await fetchJson(url, { signal: opts?.signal }));
+      // Solo el origen (sin ruta) para que funcione la restricción de la clave por sitio web.
+      return asRecord(await fetchJson(url, { signal: opts?.signal, referrerPolicy: 'strict-origin' }));
     } catch (e) {
       throw mapError(e);
     }
@@ -71,7 +72,7 @@ export class YouTubeDataApiProvider implements DataProvider {
   }
 
   private async videosById(ids: string[], opts?: RequestOptions): Promise<Map<string, Record<string, unknown>>> {
-    const data = await this.call('videos', { part: 'snippet,contentDetails,statistics,status', id: ids.join(','), maxResults: 50 }, opts);
+    const data = await this.call('videos', { part: 'snippet,contentDetails,statistics,status', id: ids.join(',') }, opts);
     const map = new Map<string, Record<string, unknown>>();
     for (const raw of asArray(data.items)) {
       const it = asRecord(raw);
@@ -243,6 +244,7 @@ function mapError(e: unknown): ProviderError {
     if (reason === 'quotaExceeded' || reason === 'dailyLimitExceeded' || reason === 'rateLimitExceeded') {
       return new ProviderError('quota', message, e.status);
     }
+    if (reason.endsWith('Forbidden') && reason !== 'forbidden') return new ProviderError('not-found', message, e.status);
     if (e.status === 400 && /key/i.test(reason)) return new ProviderError('auth', message, e.status);
     if (e.status === 401 || e.status === 403) return new ProviderError('auth', message, e.status);
     if (e.status === 404) return new ProviderError('not-found', message, e.status);

@@ -6,7 +6,7 @@
   "type": "module",
   "license": "Unlicense",
   "engines": {
-    "node": ">=20.11"
+    "node": ">=20.19"
   },
   "scripts": {
     "dev": "vite",

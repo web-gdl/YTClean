@@ -171,7 +171,7 @@ function mapError(e: unknown): ProviderError {
     const body = asRecord(e.body);
     const message = asString(body.error) ?? `HTTP ${e.status}`;
     if (e.status === 404) return new ProviderError('not-found', message, e.status);
-    if (e.status === 429) return new ProviderError('quota', message, e.status);
+    if (e.status === 429) return new ProviderError('unavailable', `La instancia limita las peticiones (429). ${message}`, e.status);
     return new ProviderError('unavailable', message, e.status);
   }
   return toProviderError(e);

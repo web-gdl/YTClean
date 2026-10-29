@@ -43,7 +43,11 @@
     --shadow: none;
   }
 }
+:root[data-theme="light"] {
+  color-scheme: light;
+}
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #111214;
   --bg-elev: #1a1c1f;
   --bg-muted: #24272b;
@@ -755,4 +759,9 @@ code {
   width: 100%;
   margin-top: 6px;
   accent-color: var(--accent);
+}
+
+.noscript {
+  font-family: sans-serif;
+  padding: 1rem;
 }

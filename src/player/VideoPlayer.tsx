@@ -14,9 +14,11 @@ interface Props {
   thumbnailUrl?: string | undefined;
   /** Mensaje que sustituye a la fachada (vídeo no insertable, privado…). */
   blockedMessage?: string | undefined;
+  /** Se llama al pulsar ▶ (para el historial opcional). */
+  onPlay?: (() => void) | undefined;
 }
 
-export function VideoPlayer({ videoId, title, start, list, thumbnailUrl, blockedMessage }: Props) {
+export function VideoPlayer({ videoId, title, start, list, thumbnailUrl, blockedMessage, onPlay }: Props) {
   const settings = useSettings();
   // La activación se guarda ligada al vídeo/lista: al cambiar de vídeo vuelve
   // a la fachada sin necesidad de un efecto.
@@ -63,8 +65,11 @@ export function VideoPlayer({ videoId, title, start, list, thumbnailUrl, blocked
       <button
         type="button"
         className="player__facade"
-        onClick={() => setActive(true)}
-        aria-label={S.video.playAria(title)}
+        onClick={() => {
+          setActive(true);
+          onPlay?.();
+        }}
+        aria-label={`${S.video.playAria(title)}. ${S.video.facadeNoteShort}`}
       >
         {showThumb ? (
           <img className="player__poster" src={thumbnailUrl} alt="" loading="lazy" referrerPolicy="no-referrer" />

@@ -139,7 +139,7 @@ export const S = {
       noneNote: 'No se contacta con ningún servicio de datos. Puedes pegar enlaces de vídeos y listas; no hay búsqueda ni páginas de canal.',
       youtube: 'YouTube Data API v3 (clave propia)',
       youtubeNote:
-        'Método oficial y estable. Las consultas van directamente a Google (www.googleapis.com) con tu clave: Google ve tu IP, tus búsquedas y tu proyecto. Cuota gratuita: 10 000 unidades al día; cada búsqueda cuesta 100 (≈ 95 búsquedas diarias). Las miniaturas se cargan desde i.ytimg.com.',
+        'Método oficial y estable. Las consultas van directamente a Google (www.googleapis.com) con tu clave: Google ve tu IP, tus búsquedas y tu proyecto. Cuota gratuita: 10 000 unidades al día; cada búsqueda cuesta 100 (≈ 99 búsquedas diarias). Las miniaturas se cargan desde i.ytimg.com.',
       invidious: 'Instancia de Invidious',
       invidiousNote:
         'Un servidor intermedio de terceros consulta YouTube por ti: Google ve la IP de la instancia, pero la instancia ve la tuya y tus búsquedas. No es anónimo. Las instancias públicas fallan con frecuencia (YouTube las bloquea); los datos de vídeo pueden faltar aunque la búsqueda funcione.',
@@ -158,7 +158,7 @@ export const S = {
     playerLocal: 'Local (servicio + yt-dlp)',
     playerLocalNote: 'Vídeo nativo sin el reproductor de YouTube: sin anuncios, con solo audio, descarga en alta calidad, subtítulos y velocidad. Requiere el servicio local en marcha.',
     apiKey: 'Clave de API de YouTube Data API',
-    apiKeyHelp: 'Crea una clave en Google Cloud (API «YouTube Data API v3») y restríngela por sitio web (referrer HTTP). Se guarda solo en este navegador.',
+    apiKeyHelp: 'Crea una clave en Google Cloud (API «YouTube Data API v3») y restríngela por sitio web (referrer HTTP) a la dirección donde abres la aplicación y por API (solo YouTube Data API v3). Se guarda solo en este navegador; a Google solo se le envía el origen de la página.',
     apiKeyLinkConsole: 'Crear clave en Google Cloud',
     apiKeyLinkDocs: 'Documentación de la Data API',
     instanceUrl: 'URL de la instancia',

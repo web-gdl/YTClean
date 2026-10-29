@@ -92,6 +92,7 @@ export function SettingsPage() {
       return;
     }
     setInstanceError('');
+    setTest({ status: 'idle' });
     updateSettings({ [key]: normalized });
   };
 
@@ -147,7 +148,7 @@ export function SettingsPage() {
                 type={showKey ? 'text' : 'password'}
                 value={settings.youtubeApiKey}
                 onChange={(e) => updateSettings({ youtubeApiKey: e.target.value.trim() })}
-                autoComplete="off"
+                autoComplete="new-password"
                 spellCheck={false}
                 className="input"
               />
@@ -244,7 +245,7 @@ export function SettingsPage() {
             <button type="button" className="button" onClick={() => void runTest()} disabled={test.status === 'running'}>
               {test.status === 'running' ? S.settings.testing : S.settings.testProvider}
             </button>
-            {settings.provider === 'youtube-data-api' ? <span className="muted small"> La prueba es una búsqueda (100 unidades de cuota).</span> : null}
+            {settings.provider === 'youtube-data-api' ? <span className="muted small"> La prueba es una búsqueda (101 unidades de cuota).</span> : null}
             {test.status === 'ok' ? (
               <p className="status status--ok" role="status">
                 {test.message}

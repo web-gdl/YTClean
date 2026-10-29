@@ -24,7 +24,7 @@
       "host": "www.googleapis.com",
       "kind": "api",
       "when": "Solo si eliges el proveedor «YouTube Data API» y realizas una búsqueda o abres un vídeo, canal o lista.",
-      "data": "Tu dirección IP, el texto buscado o los IDs consultados y tu clave de API (que Google asocia a tu proyecto). Sin cookies ni referrer."
+      "data": "Tu dirección IP, el texto buscado o los IDs consultados, tu clave de API (que Google asocia a tu proyecto) y el origen de esta página (sin ruta), necesario para que funcione la restricción de la clave por sitio web. Sin cookies."
     },
     {
       "host": "www.youtube.com",
