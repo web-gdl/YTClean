@@ -2,6 +2,8 @@
 
 ## 0.2.0 — 2026-10-29
 
+- **APK Android** (Capacitor 8): flujo `android.yml` que compila y publica un APK firmado en Releases; botón Atrás nativo; icono propio; CSP del APK con acceso solo a `http://127.0.0.1:8787`; `npm run local:android` para el servicio en Termux. Pages pasa a ejecución manual (repositorio privado).
+
 - **Modo local** (`local/`, `npm run local`): servicio Node sin dependencias que sirve la web y expone `/local/*` con yt-dlp como motor: búsqueda, canales y listas sin clave ni terceros; resolución de flujos; proxy con Range para reproducción inmediata y solo audio; descarga a caché en alta calidad (ffmpeg) con progreso; subtítulos VTT; miniaturas reenviadas.
 - **Reproductor local** con `<video>` nativo: calidad, solo audio, descarga y reproducción, subtítulos, velocidad, imagen en imagen, Media Session; cambio por vídeo entre reproductor local y oficial.
 - Nuevo proveedor «Servicio local (yt-dlp)» y ajustes de dirección del servicio, modo de reproductor y caché.

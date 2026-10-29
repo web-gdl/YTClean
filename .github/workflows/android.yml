@@ -1,0 +1,86 @@
+# Compila el APK de YT Clean (Capacitor) y lo publica como artefacto y como
+# Release del repositorio para descargarlo desde el teléfono.
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      YC_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - name: Versión
+        run: echo "YC_VERSION_NAME=$(node -p "require('./package.json').version")-${{ github.run_number }}" >> "$GITHUB_ENV"
+      - name: Compilar la web para Android y sincronizar
+        run: npm run build:android
+      - name: Comprobar el inventario de conexiones
+        run: npm run check:connections
+      - name: Preparar la clave de firma
+        env:
+          KEYSTORE_B64: ${{ secrets.YC_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.YC_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.YC_KEY_ALIAS }}
+        run: |
+          ks="$RUNNER_TEMP/ytclean.keystore"
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$ks"
+            pass="$KEYSTORE_PASSWORD"; alias="${KEY_ALIAS:-ytclean}"
+            echo "Firma: clave de los secretos del repositorio (actualizaciones sin desinstalar)."
+          else
+            pass="$(openssl rand -hex 16)"; alias=ytclean
+            keytool -genkeypair -keystore "$ks" -storepass "$pass" -keypass "$pass" -alias "$alias" \
+              -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=YT Clean" >/dev/null
+            echo "::warning::Sin secreto YC_KEYSTORE_BASE64: APK firmado con una clave temporal. Para instalar una versión nueva habrá que desinstalar la anterior. Ver docs/android.md."
+          fi
+          echo "::add-mask::$pass"
+          {
+            echo "YC_KEYSTORE_FILE=$ks"
+            echo "YC_KEYSTORE_PASSWORD=$pass"
+            echo "YC_KEY_PASSWORD=$pass"
+            echo "YC_KEY_ALIAS=$alias"
+          } >> "$GITHUB_ENV"
+      - name: Compilar APK firmado
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+      - name: Renombrar
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/release/app-release.apk "out/YTClean-${YC_VERSION_NAME}.apk"
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YTClean-apk
+          path: out/*.apk
+          retention-days: 30
+      - name: Publicar Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "apk-${YC_VERSION_NAME}" out/*.apk \
+            --title "YT Clean ${YC_VERSION_NAME}" \
+            --notes "APK compilado automáticamente desde ${GITHUB_SHA::7}. Instálalo en Android (permite «orígenes desconocidos»). El modo local necesita Termux con \`npm run local:android\`; ver docs/android.md." \
+            --latest

@@ -7,9 +7,8 @@
 # etiqueta <meta> y las cabeceras de dist/_headers no tienen efecto aquí.
 name: Publicar en GitHub Pages
 
+# Solo manual: en un repositorio privado, GitHub Pages requiere un plan de pago.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

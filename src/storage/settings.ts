@@ -30,7 +30,8 @@ export const DEFAULT_SETTINGS: Settings = {
   captions: false,
   playerLanguage: 'es',
   keepHistory: false,
-  localServiceUrl: '',
+  // En el APK el servicio local (Termux) está en 127.0.0.1:8787; en la web, mismo origen.
+  localServiceUrl: (import.meta.env.VITE_DEFAULT_LOCAL_URL as string | undefined) ?? '',
   playerMode: 'official',
 };
 

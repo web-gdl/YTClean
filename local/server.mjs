@@ -68,7 +68,9 @@ export function createApp(opts) {
   delete securityHeaders['Strict-Transport-Security']; // el servicio es http://127.0.0.1
   const serveStatic = createStaticHandler(opts.dist, securityHeaders);
   const allowedHosts = new Set([`${opts.host}:${opts.port}`, `localhost:${opts.port}`, `127.0.0.1:${opts.port}`, `[::1]:${opts.port}`]);
-  const devOrigin = opts.devOrigin ? opts.devOrigin.replace(/\/$/, '') : '';
+  // Orígenes con CORS permitido (separados por comas): el de desarrollo de Vite
+  // y/o el de la app Android (http://localhost).
+  const devOrigins = new Set(String(opts.devOrigin || '').split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean));
 
   const server = createServer((req, res) => {
     handle(req, res).catch((e) => {
@@ -87,9 +89,9 @@ export function createApp(opts) {
     const url = new URL(req.url ?? '/', `http://${host}`);
     const path = url.pathname;
 
-    if (devOrigin) {
+    if (devOrigins.size) {
       const origin = req.headers.origin;
-      if (origin === devOrigin) {
+      if (origin && devOrigins.has(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Vary', 'Origin');
         res.setHeader('Access-Control-Allow-Headers', 'x-yc-local, content-type, range');
@@ -194,5 +196,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.log(`  yt-dlp: ${v ?? 'NO ENCONTRADO (' + opts.ytdlp + ')'}  ffmpeg: ${app.ffmpeg ? 'sí' : 'no (sin descargas HQ)'}  runtime JS: ${app.jsRuntime ?? 'deno (por defecto)'}`);
     console.log(`  web: ${existsSync(resolve(opts.dist, 'index.html')) ? opts.dist : 'falta dist/ (ejecuta npm run build)'}  caché: ${opts.cache}`);
     if (opts.devOrigin) console.log(`  CORS permitido para ${opts.devOrigin}`);
+    if (String(opts.devOrigin).includes('http://localhost')) console.log('  Modo app Android: abre YT Clean en el teléfono.');
   });
 }

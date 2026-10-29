@@ -21,13 +21,19 @@
     "e2e": "playwright test",
     "local": "node local/server.mjs",
     "local:dev": "node local/server.mjs --dev-origin http://127.0.0.1:5173",
+    "local:android": "node local/server.mjs --dev-origin http://localhost",
+    "build:android": "YC_CSP_CONNECT=\"https: http://127.0.0.1:8787\" YC_CSP_IMG=\"https: http://127.0.0.1:8787\" YC_CSP_MEDIA=\"http://127.0.0.1:8787\" YC_CSP_NO_UPGRADE=1 VITE_DEFAULT_LOCAL_URL=http://127.0.0.1:8787 npm run build && npx cap sync android",
     "audit": "npm audit --omit=dev"
   },
   "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.6.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.6.0",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.1",
     "@testing-library/dom": "10.4.2",

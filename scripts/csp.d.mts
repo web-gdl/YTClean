@@ -1,6 +1,8 @@
 export interface CspOptions {
   connect?: string;
   img?: string;
+  media?: string;
+  noUpgrade?: boolean;
 }
 export const EMBED_ORIGIN: string;
 export function buildMetaCsp(opts?: CspOptions): string;

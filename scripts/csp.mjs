@@ -16,6 +16,7 @@ export const EMBED_ORIGIN = 'https://www.youtube-nocookie.com';
 export function buildMetaCsp(opts = {}) {
   const connect = (opts.connect ?? 'https:').trim();
   const img = (opts.img ?? 'https:').trim();
+  const media = (opts.media ?? '').trim();
   return [
     "default-src 'none'",
     "script-src 'self'",
@@ -26,12 +27,14 @@ export function buildMetaCsp(opts = {}) {
     "font-src 'self'",
     "manifest-src 'self'",
     // Medios: solo del propio origen (archivos de la caché y flujos del servicio local).
-    "media-src 'self'",
+    `media-src 'self'${media ? ` ${media}` : ''}`,
     "object-src 'none'",
     "worker-src 'none'",
     "base-uri 'none'",
     "form-action 'self'",
-    'upgrade-insecure-requests',
+    // En el APK (origen http://localhost) no se fuerza https para poder hablar
+    // con el servicio local en http://127.0.0.1.
+    ...(opts.noUpgrade ? [] : ['upgrade-insecure-requests']),
   ].join('; ');
 }
 
@@ -60,5 +63,7 @@ export function cspOptionsFromEnv(env = process.env) {
   const opts = {};
   if (env.YC_CSP_CONNECT) opts.connect = env.YC_CSP_CONNECT;
   if (env.YC_CSP_IMG) opts.img = env.YC_CSP_IMG;
+  if (env.YC_CSP_MEDIA) opts.media = env.YC_CSP_MEDIA;
+  if (env.YC_CSP_NO_UPGRADE === '1') opts.noUpgrade = true;
   return opts;
 }

@@ -41,6 +41,10 @@ npm run build && npm run local     # http://127.0.0.1:8787
 
 En Ajustes elige la fuente «Servicio local (yt-dlp)» y el reproductor «Local». Obtienes búsqueda sin clave, reproducción sin el reproductor de YouTube (sin sus anuncios), solo audio, descarga a caché en alta calidad con progreso, subtítulos, velocidad, imagen en imagen y controles del sistema. El servicio solo escucha en tu máquina, no reenvía cookies y exige una cabecera propia para que ninguna web ajena pueda usarlo. Detalles, límites y API en [docs/modo-local.md](docs/modo-local.md).
 
+## App Android
+
+GitHub Actions compila un APK firmado en cada push a `main` y lo publica en **Releases**. Dentro funcionan el reproductor oficial y las fuentes de datos; el modo local sin anuncios necesita Termux en el teléfono (`npm run local:android`). Instalación y detalles en [docs/android.md](docs/android.md).
+
 ## Uso rápido
 
 ```bash

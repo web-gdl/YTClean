@@ -11,6 +11,17 @@ import './styles/global.css';
 applyTheme(getSettings().theme);
 subscribeSettings(() => applyTheme(getSettings().theme));
 
+// En la app Android, el botón Atrás navega por el historial y sale en la portada.
+void (async () => {
+  const { Capacitor } = await import('@capacitor/core');
+  if (!Capacitor.isNativePlatform()) return;
+  const { App: NativeApp } = await import('@capacitor/app');
+  await NativeApp.addListener('backButton', ({ canGoBack }) => {
+    if (canGoBack) window.history.back();
+    else void NativeApp.exitApp();
+  });
+})();
+
 const root = document.getElementById('root');
 if (root) {
   createRoot(root).render(
