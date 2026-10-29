@@ -80,7 +80,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "apk-${YC_VERSION_NAME}" out/*.apk \
+          cat > notes.md <<NOTES
+          **Descarga directa:** [YTClean.apk](https://github.com/${{ github.repository }}/releases/latest/download/YTClean.apk) · Android 7.0+
+
+          Vídeos de YouTube sin anuncios, sin cuenta y sin rastreo: búsqueda, reproductor nativo, segundo plano con controles en la notificación, SponsorBlock, suscripciones locales, listas y cola, subtítulos y descargas.
+
+          Instálalo permitiendo «orígenes desconocidos». Si la versión anterior se firmó con otra clave, desinstálala antes (ver docs/android.md).
+
+          Compilado automáticamente desde ${GITHUB_SHA::7}.
+          NOTES
+          gh release create "apk-${YC_VERSION_NAME}" out/YTClean.apk \
             --title "YT Clean ${YC_VERSION_NAME}" \
-            --notes "APK compilado automáticamente desde ${GITHUB_SHA::7}. Instálalo en Android (permite «orígenes desconocidos»). Busca y reproduce sin anuncios, sin cuenta y sin configurar nada. Ver docs/android.md." \
+            --notes-file notes.md \
             --latest

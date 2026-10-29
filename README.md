@@ -1,107 +1,79 @@
-# YouTube Clean
+# YT Clean
 
-Interfaz web privada y minimalista para buscar y reproducir vídeos públicos de YouTube.
+**Vídeos de YouTube sin anuncios, sin cuenta y sin rastreo.** App Android nativa al estilo NewPipe/LibreTube: busca y reproduce nada más instalarla, sin servidor, sin clave de API y sin iniciar sesión.
 
-- **Sin anuncios propios**: la aplicación no inserta publicidad, banners, patrocinios ni recomendaciones.
-- **Sin rastreo propio**: ni analítica, ni píxeles, ni cookies, ni identificadores, ni servidor propio.
-- **Sin cuentas**: no hay registro ni inicio de sesión. Lo que guardas (favoritos, ajustes y, si lo activas, historial) vive solo en tu navegador y se borra con un botón.
-- **Sin distracciones**: nada de tendencias, Shorts, recomendaciones algorítmicas ni notificaciones.
-- **Transparente**: todas las conexiones posibles están en [docs/conexiones.json](docs/conexiones.json), la compilación falla si aparece un dominio no documentado, y la página «Privacidad» de la aplicación se genera a partir de ese mismo inventario.
+![YT Clean](docs/img/portada.png)
 
-Es un sitio estático (React + TypeScript + Vite) que puedes alojar en cualquier parte. No necesita backend.
+<p align="center">
+  <a href="https://github.com/web-gdl/YTClean/releases/latest/download/YTClean.apk"><b>⬇ Descargar YTClean.apk (última versión)</b></a>
+  &nbsp;·&nbsp; <a href="https://github.com/web-gdl/YTClean/releases">Todas las versiones</a>
+  &nbsp;·&nbsp; Android 7.0 o superior
+</p>
 
-> **Dos formas de reproducir, dicho claramente.**
-> - **Por defecto**, los vídeos se reproducen con el reproductor oficial de YouTube en modo de privacidad mejorada (`youtube-nocookie.com`), que se carga **solo cuando pulsas ▶**. Ese reproductor corre dentro de un iframe en un origen de Google: recibe tu IP, el ID del vídeo y el origen de la página, puede guardar datos en su propio origen y **puede mostrar los anuncios de YouTube dentro del vídeo**. YouTube Clean elimina todo lo que añade una web alrededor del vídeo, pero no altera ni bloquea el reproductor oficial.
-> - **Modo local (opcional)**: un servicio en tu propio equipo usa yt-dlp para obtener los flujos y la web los reproduce con `<video>` nativo, sin el reproductor de YouTube ni sus anuncios, con solo audio, descarga en alta calidad, subtítulos y velocidad. Es la vía de NewPipe/FreeTube: no es conforme a las condiciones de YouTube y queda para uso personal y local. Ver [docs/modo-local.md](docs/modo-local.md).
->
-> Más detalles en [docs/privacidad.md](docs/privacidad.md).
+> Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
-## Cómo funciona
+## Qué hace
 
-1. **Enlace directo** (sin configurar nada): pega un enlace o ID de YouTube y se abre el reproductor. No se consulta ningún servicio de datos.
-2. **Búsqueda, canales y listas**: necesitan una *fuente de datos* que eliges en Ajustes. Hay tres adaptadores intercambiables:
+| | |
+|---|---|
+| 🔍 **Buscar** | Solo al enviar, sin tendencias ni recomendaciones. Desplazamiento infinito. Abre enlaces de YouTube compartidos o pegados. |
+| ▶️ **Reproductor nativo** | ExoPlayer, sin el reproductor de YouTube ni sus anuncios. Calidad de 144p a 2160p, solo audio, subtítulos, pantalla completa e imagen en imagen. |
+| 🎧 **Segundo plano** | Sigue sonando con la pantalla apagada, con controles en la notificación y en la pantalla de bloqueo. |
+| ⏭ **SponsorBlock** | Salta patrocinios, autopromoción, recordatorios de suscripción y partes sin música. |
+| 📺 **Suscripciones** | Sigue canales sin cuenta (solo en el teléfono) y consulta sus novedades en una pestaña propia. |
+| 📚 **Biblioteca** | Guardados, listas de reproducción locales, cola (reproducir a continuación, añadir, saltar), canales e historial opcional. |
+| ⬇ **Descargas** | Audio (M4A) o vídeo MP4 en la calidad elegida, a `Descargas/YTClean`. |
+| 🚫 **Shorts** | Ocultos por defecto; se pueden mostrar desde Ajustes. |
 
-| Fuente | Cómo | Privacidad | Fiabilidad |
-|---|---|---|---|
-| **YouTube Data API v3** | Tu propia clave de Google Cloud, guardada solo en tu navegador | Google ve tu IP, tus búsquedas y tu clave | Alta (API oficial). Cuota: 10 000 unidades/día; cada búsqueda cuesta 100 |
-| **Invidious** | Una instancia pública o propia | La instancia ve tu IP y búsquedas; Google ve la IP de la instancia | Variable: YouTube bloquea instancias con frecuencia |
-| **Piped** | Una instancia pública o propia (URL de la API) | Igual que Invidious | Variable |
-| **Servicio local (yt-dlp)** | `npm run local` en tu equipo | Google ve la IP de tu equipo; sin cuenta, clave ni terceros | Depende de yt-dlp (actualízalo a menudo) |
+Mantén pulsado cualquier vídeo para ver todas sus acciones.
 
-La fuente se puede cambiar en cualquier momento; [docs/proveedores.md](docs/proveedores.md) documenta los límites de cada una y cómo añadir otra.
+<p align="center">
+  <img src="docs/img/buscar.png" width="200" alt="Búsqueda">
+  <img src="docs/img/reproductor.png" width="200" alt="Reproductor con SponsorBlock y cola">
+  <img src="docs/img/acciones.png" width="200" alt="Acciones de un vídeo">
+  <img src="docs/img/biblioteca.png" width="200" alt="Biblioteca">
+</p>
 
-3. **Reproducción**: fachada con miniatura y botón ▶; al pulsar se inserta el reproductor oficial con `sandbox`, permisos mínimos y parámetros documentados (`rel=0`, sin anotaciones, subtítulos e idioma según tus ajustes). Controles, velocidad, calidad y subtítulos los ofrece el propio reproductor. Con el **reproductor local** (Ajustes) se usa `<video>` nativo alimentado por el servicio local.
+## Privacidad
 
-## Modo local (NewPipe en tu navegador)
+- Sin anuncios, cuentas, analítica, telemetría, píxeles ni identificadores propios. No hay ningún servidor de YT Clean.
+- Los vídeos se obtienen directamente de YouTube desde el teléfono con [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor): YouTube ve la IP del teléfono y lo que consultas, sin cuenta ni cookies de sesión.
+- Con SponsorBlock activado, `sponsor.ajay.app` recibe solo los 4 primeros caracteres del hash del ID del vídeo, que comparten muchos vídeos. Se desactiva en Ajustes.
+- Guardados, listas, suscripciones e historial se quedan en el teléfono. No se incluyen en copias de seguridad y se borran desde Ajustes. El historial está desactivado por defecto.
+- Permisos: Internet, notificaciones (controles y descargas) y servicios en primer plano (reproducción y descargas).
+
+Este acceso a YouTube no es conforme a sus condiciones de servicio. Es un proyecto personal, sin afiliación con YouTube ni con Google.
+
+## Instalar
+
+1. Descarga [`YTClean.apk`](https://github.com/web-gdl/YTClean/releases/latest/download/YTClean.apk) en el teléfono. El repositorio es privado: tienes que haber iniciado sesión en GitHub con una cuenta con acceso.
+2. Ábrelo y permite instalar apps de orígenes desconocidos.
+3. Acepta las notificaciones para ver los controles de reproducción y el progreso de las descargas.
+
+Cada push a `main` compila y publica un APK nuevo en **Releases** (GitHub Actions, `.github/workflows/android.yml`). Para que las actualizaciones se instalen encima de la versión anterior, configura una clave de firma fija como secreto del repositorio. Los pasos están en [docs/android.md](docs/android.md).
+
+## Cómo está hecho
+
+| Parte | Tecnología |
+|---|---|
+| App | Kotlin, vistas de Android con Material 3, `android/` |
+| Extracción | NewPipeExtractor (la misma versión que usa NewPipe) y PoToken generado en un WebView local, portado de NewPipe |
+| Reproducción | Media3 ExoPlayer con manifiestos DASH generados en el teléfono; MediaSession para el segundo plano |
+| Descargas | WorkManager, por fragmentos; vídeo y audio se unen con MediaMuxer sin recodificar |
+| Tamaño | R8 con reducción de código y recursos; solo recursos en español e inglés |
+
+Si YouTube cambia y algo deja de funcionar, hay que actualizar NewPipeExtractor en `android/app/build.gradle.kts`. Los detalles están en [docs/android.md](docs/android.md).
+
+## También en el repositorio
+
+- **Aplicación web** (`src/`, React + Vite): interfaz minimalista con el reproductor oficial en modo de privacidad mejorada y fuentes de datos intercambiables (YouTube Data API, Invidious, Piped). Ver [docs/arquitectura.md](docs/arquitectura.md) y [docs/privacidad.md](docs/privacidad.md).
+- **Modo local** (`local/`): servicio para el ordenador basado en yt-dlp, que reproduce sin el reproductor de YouTube desde el navegador. Ver [docs/modo-local.md](docs/modo-local.md).
 
 ```bash
-pip install -U "yt-dlp[default]"   # motor; ffmpeg opcional para 720p/1080p
-npm run build && npm run local     # http://127.0.0.1:8787
+npm ci && npm run check   # web: lint, tipos, pruebas, build e inventario de conexiones
+cd android && ./gradlew assembleRelease   # app Android (requiere el SDK de Android)
 ```
-
-En Ajustes elige la fuente «Servicio local (yt-dlp)» y el reproductor «Local». Obtienes búsqueda sin clave, reproducción sin el reproductor de YouTube (sin sus anuncios), solo audio, descarga a caché en alta calidad con progreso, subtítulos, velocidad, imagen en imagen y controles del sistema. El servicio solo escucha en tu máquina, no reenvía cookies y exige una cabecera propia para que ninguna web ajena pueda usarlo. Detalles, límites y API en [docs/modo-local.md](docs/modo-local.md).
-
-## App Android (nativa, como NewPipe)
-
-`android/` contiene una app Kotlin que **busca y reproduce nada más instalarla**: extrae los vídeos en el propio teléfono con NewPipeExtractor y los reproduce con ExoPlayer, sin anuncios, sin cuenta, sin clave y sin servidor. GitHub Actions compila un APK firmado en cada push a `main` y lo publica en **Releases**. Detalles en [docs/android.md](docs/android.md).
-
-## Uso rápido
-
-```bash
-npm ci
-npm run dev        # http://127.0.0.1:5173
-npm run check      # lint + tipos + pruebas + build + inventario de conexiones
-npm run preview    # sirve dist/ con la CSP de producción
-npm run local      # modo local: sirve dist/ + API yt-dlp en http://127.0.0.1:8787
-```
-
-Para publicar, copia `dist/` a cualquier alojamiento estático; [docs/despliegue.md](docs/despliegue.md) explica las cabeceras de seguridad, GitHub Pages y cómo restringir la CSP a los proveedores que uses.
-
-### Obtener una clave de la Data API (opcional)
-
-1. En [Google Cloud Console](https://console.cloud.google.com/apis/library/youtube.googleapis.com) crea un proyecto y activa «YouTube Data API v3».
-2. Crea una **clave de API** y restríngela por «sitios web» (referrer HTTP) al dominio donde alojes la aplicación.
-3. Pégala en Ajustes → Fuente de datos → YouTube Data API. Se guarda solo en tu navegador y solo se envía a `www.googleapis.com`.
-
-## Funciones
-
-- Búsqueda de vídeos (solo al pulsar Buscar o Intro; nunca mientras escribes) con paginación.
-- Página de vídeo: reproductor, título, canal, fecha, visualizaciones, duración, descripción plegable, avisos de vídeo privado, no insertable, con restricción de edad o geográfica.
-- Canales (incluidos `@handles`) y listas de reproducción, con «reproducir toda la lista» en el reproductor oficial.
-- Guardados (favoritos) e historial opcional (desactivado por defecto), solo locales.
-- Tema claro, oscuro o como el sistema; miniaturas desactivables; subtítulos e idioma del reproductor.
-- Diseño adaptable (móvil, tableta, escritorio), navegación por teclado, `prefers-reduced-motion`, sin fuentes externas.
-- Instalable como aplicación web (manifiesto) sin service worker ni caché persistente.
-
-## Privacidad y seguridad
-
-- Sin servidor propio, sin analítica, sin cookies, sin identificadores. Una visita sin interacción no escribe nada en el navegador.
-- Todas las peticiones salen con `credentials: "omit"` y `referrerPolicy: "no-referrer"` (la Data API, con solo el origen, por la restricción de la clave); las imágenes externas tampoco envían referrer.
-- CSP estricta en producción (`script-src 'self'`, sin código en línea, `frame-src` limitado a `youtube-nocookie.com`, `object-src 'none'`), más `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options` y otras cabeceras en `dist/_headers`.
-- `npm run check:connections` compara los dominios presentes en el código y en `dist/` con el inventario; cualquier dominio nuevo rompe la compilación.
-- Dependencias de ejecución: solo `react` y `react-dom`. Sin Tailwind, sin enrutador externo, sin librería de peticiones.
-
-Lee [docs/privacidad.md](docs/privacidad.md) para el inventario completo, el modelo de amenazas y los límites.
-
-## Estructura
-
-```
-local/        servicio local opcional (Node sin dependencias): yt-dlp, proxy, caché
-src/
-  app/        enrutador propio, textos, tema
-  data/       modelo de datos, interfaz DataProvider, adaptadores (providers/), HTTP, utilidades
-  storage/    localStorage con espacio de nombres: ajustes, guardados, historial
-  player/     URL del embed, fachada del reproductor oficial y reproductor local
-  pages/      inicio, búsqueda, ver, canal, lista, guardados, ajustes, privacidad
-  components/ cabecera, buscador, tarjetas, estados
-scripts/      csp.mjs (política única), postbuild.mjs, check-connections.mjs
-docs/         conexiones.json (inventario), privacidad, proveedores, arquitectura, despliegue, modo-local
-tests/        pruebas unitarias y de componentes (Vitest + jsdom)
-e2e/          pruebas de extremo a extremo (Playwright, sin salir a Internet)
-```
-
-[docs/arquitectura.md](docs/arquitectura.md) explica las decisiones.
 
 ## Licencia
 
-Dominio público ([Unlicense](LICENSE)). YouTube Clean no está afiliado a YouTube ni a Google; YouTube es una marca de Google LLC. Usar la aplicación implica aceptar las condiciones de los servicios a los que decidas conectarte.
+App Android: **GPL-3.0-or-later**, porque incorpora NewPipeExtractor y código de NewPipe (ver [`android/LICENSE`](android/LICENSE)). Aplicación web y servicio local: dominio público ([Unlicense](LICENSE)).
