@@ -48,12 +48,13 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
         val kind = inputData.getString(KEY_KIND) ?: KIND_AUDIO
         val height = inputData.getInt(KEY_HEIGHT, 720)
         val notifId = url.hashCode()
+        if (kind == KIND_MP3) return@withContext doMp3(url, notifId)
         val tmp = File(applicationContext.cacheDir, "dl-${System.nanoTime()}").apply { mkdirs() }
         try {
             setForeground(foreground(notifId, "Preparando descarga…", 0, true))
             val info = Yt.stream(url)
             val title = info.name
-            val safe = title.replace(Regex("[\\\\/:*?\"<>|]"), "_").take(120)
+            val safe = safeName(title)
             val (file, mime, ext) = when (kind) {
                 KIND_AUDIO -> {
                     val a = YtMedia.downloadAudio(info) ?: error("No hay audio descargable")
@@ -93,6 +94,113 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
         } finally {
             tmp.deleteRecursively()
         }
+    }
+
+    /**
+     * Descarga el audio, lo convierte a MP3 (LAME) con etiqueta ID3 y portada, y lo guarda en
+     * Música/YTClean[/lista]. Devuelve siempre éxito para que un vídeo fallido no detenga el
+     * resto de la cola de MP3 (el error se avisa en una notificación).
+     */
+    private suspend fun doMp3(url: String, notifId: Int): Result {
+        val folder = inputData.getString(KEY_FOLDER)?.let { safeName(it) }?.ifBlank { null }
+        val position = inputData.getString(KEY_POSITION)
+        val kbps = inputData.getInt(KEY_KBPS, 192)
+        val tmp = File(applicationContext.cacheDir, "mp3-${System.nanoTime()}").apply { mkdirs() }
+        var title = url
+        try {
+            setForeground(foreground(notifId, "Preparando MP3…", 0, true, "MP3"))
+            val info = Yt.stream(url)
+            title = info.name
+            val label = if (position != null) "($position) $title" else title
+            val a = YtMedia.downloadAudio(info) ?: error("No hay audio descargable")
+            val audio = File(tmp, "audio")
+            fetch(a.content, audio) { p -> progress(notifId, label, p * 0.5f, "Descargando audio") }
+            val artist = info.uploaderName?.removeSuffix(" - Topic")
+            val cover = runCatching { coverJpeg(Yt.bestImage(info.thumbnails, 720)) }.getOrNull()
+            val mp3 = File(tmp, "out.mp3")
+            mp3.outputStream().buffered().use { os ->
+                os.write(Mp3Converter.id3(title, artist, folder, cover))
+                Mp3Converter.convert(audio, os, kbps) { p ->
+                    val percent = 50 + (p * 50).toInt()
+                    if (percent != lastPercent) {
+                        lastPercent = percent
+                        // Se actualiza la notificación en primer plano (mismo ID) sin suspender.
+                        runCatching {
+                            applicationContext.getSystemService(NotificationManager::class.java)
+                                .notify(notifId, progressNotification(label, percent, false, "Convirtiendo a MP3"))
+                        }
+                    }
+                }
+            }
+            audio.delete()
+            val uri = publishMusic(mp3, "${safeName(title)}.mp3", folder)
+            Library(applicationContext).addDownload(DownloadRecord(title, uri.toString(), "audio/mpeg", mp3.length(), System.currentTimeMillis()))
+            notify(notifId, "MP3 listo: $title", folder?.let { "Música/YTClean/$it" } ?: "Música/YTClean")
+        } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
+            notify(notifId, "No se pudo crear el MP3: $title", errorMessage(e))
+        } finally {
+            tmp.deleteRecursively()
+        }
+        return Result.success()
+    }
+
+    /** Miniatura como JPEG de hasta 640 px (lo que mejor leen reproductores y autoestéreos). */
+    private fun coverJpeg(url: String?): ByteArray? {
+        if (url == null) return null
+        val bytes = DownloaderImpl.getInstance().client.newCall(Request.Builder().url(url).build()).execute().use { r ->
+            if (!r.isSuccessful) return null
+            r.body.bytes()
+        }
+        val bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size) ?: return null
+        val scale = minOf(1f, 640f / maxOf(bmp.width, bmp.height))
+        val scaled = if (scale < 1f) android.graphics.Bitmap.createScaledBitmap(bmp, (bmp.width * scale).toInt(), (bmp.height * scale).toInt(), true) else bmp
+        val out = java.io.ByteArrayOutputStream()
+        scaled.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out)
+        if (scaled !== bmp) scaled.recycle()
+        bmp.recycle()
+        return out.toByteArray()
+    }
+
+    /**
+     * Guarda el MP3 en Música/YTClean (visible para los reproductores de música). En Android 9
+     * o anterior se usa la carpeta pública si se concedió el permiso de almacenamiento; si no,
+     * la carpeta de la app.
+     */
+    private fun publishMusic(file: File, name: String, folder: String?): Uri {
+        val sub = Environment.DIRECTORY_MUSIC + "/YTClean" + (folder?.let { "/$it" } ?: "")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = applicationContext.contentResolver
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, sub)
+                put(MediaStore.Audio.Media.IS_MUSIC, 1)
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+            val uri = resolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values) ?: error("No se pudo crear el archivo")
+            try {
+                resolver.openOutputStream(uri)?.use { os -> file.inputStream().use { it.copyTo(os) } } ?: error("No se pudo escribir el archivo")
+            } catch (e: Exception) {
+                resolver.delete(uri, null, null)
+                throw e
+            }
+            values.clear()
+            values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+            resolver.update(uri, values, null, null)
+            return uri
+        }
+        val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+            applicationContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        @Suppress("DEPRECATION")
+        val base = if (granted) Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
+        else applicationContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!
+        val dir = File(base, "YTClean" + (folder?.let { "/$it" } ?: "")).apply { mkdirs() }
+        val dest = File(dir, name)
+        file.copyTo(dest, overwrite = true)
+        android.media.MediaScannerConnection.scanFile(applicationContext, arrayOf(dest.path), arrayOf("audio/mpeg"), null)
+        return Uri.fromFile(dest)
     }
 
     /** Descarga por fragmentos de 8 MB con `&range=` (y POST, como el reproductor). */
@@ -201,28 +309,32 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
 
     private var lastPercent = -1
 
-    private suspend fun progress(id: Int, title: String, fraction: Float) {
+    private suspend fun progress(id: Int, title: String, fraction: Float, status: String = "Descargando") {
         val percent = (fraction * 100).toInt()
         if (percent == lastPercent) return
         lastPercent = percent
-        setForeground(foreground(id, title, percent, false))
+        setForeground(foreground(id, title, percent, false, status))
     }
 
-    private fun foreground(id: Int, text: String, percent: Int, indeterminate: Boolean): ForegroundInfo {
-        ensureChannel(applicationContext)
-        val n = NotificationCompat.Builder(applicationContext, CHANNEL)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle("Descargando")
-            .setContentText(text)
-            .setOnlyAlertOnce(true)
-            .setOngoing(true)
-            .setProgress(100, percent, indeterminate)
-            .build()
+    private fun foreground(id: Int, text: String, percent: Int, indeterminate: Boolean, status: String = "Descargando"): ForegroundInfo {
+        val n = progressNotification(text, percent, indeterminate, status)
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(id, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
             ForegroundInfo(id, n)
         }
+    }
+
+    private fun progressNotification(text: String, percent: Int, indeterminate: Boolean, status: String): android.app.Notification {
+        ensureChannel(applicationContext)
+        return NotificationCompat.Builder(applicationContext, CHANNEL)
+            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setContentTitle(status)
+            .setContentText(text)
+            .setOnlyAlertOnce(true)
+            .setOngoing(true)
+            .setProgress(100, percent, indeterminate)
+            .build()
     }
 
     private fun notify(id: Int, title: String, text: String?) {
@@ -250,6 +362,36 @@ class DownloadWorker(context: Context, params: WorkerParameters) : CoroutineWork
             if (nm.getNotificationChannel(CHANNEL) == null) {
                 nm.createNotificationChannel(NotificationChannel(CHANNEL, "Descargas", NotificationManager.IMPORTANCE_LOW))
             }
+        }
+
+        const val KIND_MP3 = "mp3"
+        const val KEY_FOLDER = "folder"
+        const val KEY_POSITION = "position"
+        const val KEY_KBPS = "kbps"
+        private const val MP3_QUEUE = "mp3-queue"
+
+        fun safeName(name: String): String = name.replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), "_").trim().trimEnd('.').take(120)
+
+        /**
+         * Pone en cola la conversión a MP3 de uno o varios vídeos. Se procesan de uno en uno
+         * (cola única que se va ampliando), para no saturar teléfonos o autoestéreos con poca RAM.
+         * [folder] = subcarpeta y álbum (nombre de la lista).
+         */
+        fun enqueueMp3(context: Context, urls: List<String>, folder: String? = null, kbps: Int = 192) {
+            if (urls.isEmpty()) return
+            val requests = urls.mapIndexed { i, url ->
+                OneTimeWorkRequestBuilder<DownloadWorker>()
+                    .setInputData(
+                        workDataOf(
+                            KEY_URL to url, KEY_KIND to KIND_MP3, KEY_FOLDER to folder, KEY_KBPS to kbps,
+                            KEY_POSITION to if (urls.size > 1) "${i + 1}/${urls.size}" else null,
+                        ),
+                    )
+                    .build()
+            }
+            var chain = WorkManager.getInstance(context).beginUniqueWork(MP3_QUEUE, ExistingWorkPolicy.APPEND_OR_REPLACE, requests.first())
+            for (r in requests.drop(1)) chain = chain.then(r)
+            chain.enqueue()
         }
 
         fun enqueue(context: Context, url: String, kind: String, height: Int = 720) {

@@ -23,6 +23,7 @@
 | 📺 **Suscripciones** | Sigue canales sin cuenta (solo en el teléfono) y consulta sus novedades en una pestaña propia. |
 | 📚 **Biblioteca** | Guardados, listas de reproducción locales, cola (reproducir a continuación, añadir, saltar), canales e historial opcional. |
 | ⬇ **Descargas** | Audio (M4A) o vídeo MP4 en la calidad elegida, a `Descargas/YTClean`. |
+| 🎵 **MP3** | Convierte vídeos o **listas enteras** a MP3 en el teléfono (LAME), con título, artista, álbum y portada, en `Música/YTClean`. |
 | 🚫 **Shorts** | Ocultos por defecto; se pueden mostrar desde Ajustes. |
 | 🌍 **País o región** | Elige de qué país es el contenido que te muestra YouTube (automático por defecto). |
 
@@ -70,6 +71,7 @@ Cada push a `main` compila y publica un APK nuevo en **Releases** (GitHub Action
 | Extracción | NewPipeExtractor (la misma versión que usa NewPipe) y PoToken generado en un WebView local, portado de NewPipe |
 | Reproducción | Media3 ExoPlayer con manifiestos DASH generados en el teléfono; MediaSession para el segundo plano |
 | Descargas | WorkManager, por fragmentos; vídeo y audio se unen con MediaMuxer sin recodificar |
+| MP3 | MediaCodec decodifica y LAME 3.100 (C, vía JNI, `android/app/src/main/cpp`) codifica; ID3v2.3 propio |
 | Tamaño | R8 con reducción de código y recursos; solo recursos en español e inglés |
 
 Si YouTube cambia y algo deja de funcionar, hay que actualizar NewPipeExtractor en `android/app/build.gradle.kts`. Los detalles están en [docs/android.md](docs/android.md).
@@ -86,4 +88,4 @@ cd android && ./gradlew assembleRelease   # app Android (requiere el SDK de Andr
 
 ## Licencia
 
-App Android: **GPL-3.0-or-later**, porque incorpora NewPipeExtractor y código de NewPipe (ver [`android/LICENSE`](android/LICENSE)). Aplicación web y servicio local: dominio público ([Unlicense](LICENSE)).
+App Android: **GPL-3.0-or-later**, porque incorpora NewPipeExtractor y código de NewPipe (ver [`android/LICENSE`](android/LICENSE)). Incluye LAME 3.100 (LGPL-2.0-or-later, [`android/app/src/main/cpp/lame`](android/app/src/main/cpp/lame)). Aplicación web y servicio local: dominio público ([Unlicense](LICENSE)).

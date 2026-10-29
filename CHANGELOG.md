@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 0.8.0 — 2026-10-29
+
+- Android: **descarga en MP3** de vídeos y listas de reproducción, convertida en el propio teléfono (sin servidor ni FFmpeg): el audio se decodifica con MediaCodec y se codifica con **LAME 3.100** (nativo, ARM). Etiqueta ID3v2.3 con título, canal (artista), lista (álbum) y portada; se guarda en **Música/YTClean** (y en una subcarpeta con el nombre de la lista), visible para los reproductores de música.
+  - Desde el botón Descargar del reproductor, la pulsación larga de cualquier vídeo, el icono de descarga de Guardados, Historial y las listas locales, y la nueva pantalla de **listas de YouTube** (abre enlaces `playlist?list=` compartidos o pegados) con «Reproducir todo» y «Descargar MP3».
+  - Los MP3 se convierten **de uno en uno** en una cola en segundo plano (pensado para equipos con 1 GB de RAM como el 8227L); un vídeo que falle no detiene el resto.
+  - Calidad configurable en Ajustes → Descargas: 128, 192 (por defecto), 256 o 320 kbps.
+
 ## 0.7.0 — 2026-10-29
 
 - Android: **diseño para pantallas anchas en horizontal**, pensado para autoestéreos alps **8227L** (área de 1024×534 dp con 1 dp = 1 px); también se aplica a tabletas en horizontal (≥ 900×480 dp, `res/*-w900dp-h480dp`).

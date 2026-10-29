@@ -28,6 +28,8 @@ class Library(context: Context) {
     val keepHistory: Boolean get() = sp.getBoolean("history", false)
     val sponsorBlock: Boolean get() = sp.getBoolean("sponsorblock", true)
     val captions: Boolean get() = sp.getBoolean("captions", false)
+    /** Tasa de bits de los MP3 (kbps). */
+    val mp3Bitrate: Int get() = sp.getString("mp3_bitrate", "192")?.toIntOrNull() ?: 192
     /** País del contenido (código ISO, p. ej. «MX»); vacío = el del teléfono. */
     val region: String get() = sp.getString("region", "") ?: ""
 

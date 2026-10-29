@@ -192,15 +192,16 @@ class PlayerActivity : AppCompatActivity() {
         val info = s.info ?: return
         val url = s.current?.url ?: return
         val heights = YtMedia.downloadHeights(info)
-        val labels = mutableListOf("Solo audio (M4A)")
+        val labels = mutableListOf("MP3 (${library.mp3Bitrate} kbps)", "Audio original (M4A)")
         labels += heights.map { "Vídeo ${it}p (MP4)" }
         if (heights.isEmpty() && YtMedia.downloadMuxed(info) != null) labels += "Vídeo (MP4)"
         MaterialAlertDialogBuilder(this)
             .setTitle("Descargar")
             .setItems(labels.toTypedArray()) { _, which ->
                 when {
-                    which == 0 -> VideoActions.download(this, url, DownloadWorker.KIND_AUDIO, 0)
-                    heights.isNotEmpty() -> VideoActions.download(this, url, DownloadWorker.KIND_VIDEO, heights[which - 1])
+                    which == 0 -> s.current?.let { VideoActions.downloadMp3(this, listOf(it)) }
+                    which == 1 -> VideoActions.download(this, url, DownloadWorker.KIND_AUDIO, 0)
+                    heights.isNotEmpty() -> VideoActions.download(this, url, DownloadWorker.KIND_VIDEO, heights[which - 2])
                     else -> VideoActions.download(this, url, DownloadWorker.KIND_VIDEO, 360)
                 }
             }

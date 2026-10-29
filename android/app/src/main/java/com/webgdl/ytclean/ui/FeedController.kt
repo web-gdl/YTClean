@@ -28,6 +28,8 @@ class FeedController(
     )
     private var feed: Feed? = null
     private var items = emptyList<VideoItem>()
+    /** Vídeos cargados hasta ahora. */
+    val loaded: List<VideoItem> get() = items
     private var job: Job? = null
     private var loadingMore = false
 

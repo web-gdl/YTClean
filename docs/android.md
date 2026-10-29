@@ -15,6 +15,8 @@
 - **Suscripciones locales** (sin cuenta) con pestaña de novedades.
 - **Biblioteca**: guardados, listas de reproducción locales, canales suscritos, historial (opcional) y descargas.
 - **Descargas** de audio (M4A) o vídeo MP4 (vídeo y audio unidos sin recodificar) a Descargas/YTClean.
+- **MP3** de un vídeo o de una lista entera (local o de YouTube): se descarga el audio, se convierte en el teléfono con LAME (nativo) y se guarda con etiqueta ID3 (título, artista, álbum y portada) en Música/YTClean/[lista]. Cola de uno en uno; calidad en Ajustes → Descargas. En Android 9 o anterior pide el permiso de almacenamiento para usar la carpeta pública Música (si no se concede, quedan en la carpeta de la app).
+- **Listas de YouTube**: los enlaces `playlist?list=` se abren en una pantalla propia con «Reproducir todo» y «Descargar MP3».
 - **Shorts** ocultos por defecto (desactivable en Ajustes).
 - **País o región** del contenido (Ajustes → Contenido): automático o cualquiera de los que admite YouTube.
 
@@ -22,7 +24,7 @@ Debajo del vídeo, una barra fija muestra las acciones principales (Guardar, Cal
 
 Mantén pulsado cualquier vídeo de una lista para ver todas sus acciones.
 
-Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones y servicios en primer plano (reproducción y descargas). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
+Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones, servicios en primer plano (reproducción y descargas) y, solo en Android 9 o anterior, almacenamiento (para Música/YTClean). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
 
 Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin cuenta ni cookies de sesión (como con NewPipe). Con SponsorBlock activado, sponsor.ajay.app recibe tu IP y los 4 primeros caracteres del hash SHA-256 del ID del vídeo (compartidos por muchos vídeos). Este acceso no es conforme a las condiciones de servicio de YouTube; es un proyecto personal.
 
@@ -48,5 +50,7 @@ YouTube cambia a menudo. Si la reproducción deja de funcionar, actualiza la ver
 Con el SDK de Android y Java 17+: `cd android && ./gradlew assembleRelease`.
 
 ## Licencia
+
+La app incluye LAME 3.100 (`app/src/main/cpp/lame`, LGPL-2.0-or-later, sin modificar; ver `VENDOR.md`), compilado con el NDK como biblioteca compartida.
 
 La app Android incorpora NewPipeExtractor y código portado de NewPipe, ambos GPL-3.0-or-later, por lo que **la app Android se distribuye bajo GPL-3.0-or-later** (ver `android/LICENSE`). La aplicación web conserva su licencia.

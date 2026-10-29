@@ -24,6 +24,15 @@
             app:summary="Salta patrocinios, autopromoción y recordatorios de suscripción (base comunitaria sponsor.ajay.app; solo se envía un prefijo del ID del vídeo)"
             app:title="SponsorBlock" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="Descargas">
+        <ListPreference
+            app:defaultValue="192"
+            app:entries="@array/mp3_labels"
+            app:entryValues="@array/mp3_values"
+            app:key="mp3_bitrate"
+            app:title="Calidad de los MP3"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
     <PreferenceCategory app:title="Contenido">
         <ListPreference
             app:defaultValue=""

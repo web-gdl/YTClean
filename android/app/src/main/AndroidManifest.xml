@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Solo Android 9 o anterior: guardar los MP3 en la carpeta pública Música/YTClean. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <!-- Reproducción en segundo plano con controles en la notificación. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -63,6 +67,10 @@
 
         <activity
             android:name=".ui.ChannelActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.PlaylistActivity"
             android:exported="false" />
 
         <activity

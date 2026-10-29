@@ -6,4 +6,10 @@
     <string-array name="quality_values">
         <item>144</item><item>240</item><item>360</item><item>480</item><item>720</item><item>1080</item><item>1440</item><item>2160</item>
     </string-array>
+    <string-array name="mp3_labels">
+        <item>128 kbps (archivos más pequeños)</item><item>192 kbps (recomendada)</item><item>256 kbps</item><item>320 kbps (máxima)</item>
+    </string-array>
+    <string-array name="mp3_values">
+        <item>128</item><item>192</item><item>256</item><item>320</item>
+    </string-array>
 </resources>

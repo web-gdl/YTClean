@@ -60,9 +60,14 @@ fun openChannel(context: Context, url: String) {
     context.startActivity(Intent(context, ChannelActivity::class.java).putExtra(ChannelActivity.EXTRA_URL, url))
 }
 
-/** Abre un enlace de YouTube; devuelve false si no es un vídeo ni un canal. */
+fun openPlaylist(context: Context, url: String) {
+    context.startActivity(Intent(context, PlaylistActivity::class.java).putExtra(PlaylistActivity.EXTRA_URL, url))
+}
+
+/** Abre un enlace de YouTube; devuelve false si no es un vídeo, una lista ni un canal. */
 fun openYoutubeLink(context: Context, url: String): Boolean = when {
     Yt.isVideoUrl(url) -> { openVideo(context, url); true }
+    Yt.isPlaylistUrl(url) -> { openPlaylist(context, url); true }
     Yt.isChannelUrl(url) -> { openChannel(context, url); true }
     else -> false
 }

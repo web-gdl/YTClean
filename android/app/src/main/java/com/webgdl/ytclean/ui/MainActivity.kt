@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             Intent.ACTION_VIEW -> intent.dataString
             else -> null
         } ?: return
-        if (!openYoutubeLink(this, url)) Toast.makeText(this, "Ese enlace no es un vídeo ni un canal de YouTube", Toast.LENGTH_LONG).show()
+        if (!openYoutubeLink(this, url)) Toast.makeText(this, "Ese enlace no es un vídeo, una lista ni un canal de YouTube", Toast.LENGTH_LONG).show()
     }
 
     private fun submit(raw: String) {

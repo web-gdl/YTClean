@@ -44,6 +44,16 @@ class LibraryListActivity : AppCompatActivity() {
             onClick = { item, all -> PlaybackManager.get(this).playQueue(all, all.indexOf(item)); startActivity(Intent(this, PlayerActivity::class.java)) },
         )
 
+        b.toolbar.menu.add(0, 1, 0, "Descargar en MP3").apply {
+            setIcon(com.webgdl.ytclean.R.drawable.ic_download)
+            setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_ALWAYS)
+            androidx.core.view.MenuItemCompat.setIconTintList(this, android.content.res.ColorStateList.valueOf(getColor(com.webgdl.ytclean.R.color.fg)))
+        }
+        b.toolbar.setOnMenuItemClickListener {
+            VideoActions.confirmMp3List(this, items(), b.toolbar.title.toString())
+            true
+        }
+
         b.actions.visibility = View.VISIBLE
         b.actionPrimary.text = "Reproducir todo"
         b.actionPrimary.setOnClickListener { playAll(shuffle = false) }

@@ -9,6 +9,7 @@ import org.schabi.newpipe.extractor.channel.ChannelInfo
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabs
 import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler
+import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandler
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory
@@ -51,6 +52,7 @@ object Yt {
 
     fun isVideoUrl(url: String): Boolean = runCatching { service.streamLHFactory.acceptUrl(url) }.getOrDefault(false)
     fun isChannelUrl(url: String): Boolean = runCatching { service.channelLHFactory.acceptUrl(url) }.getOrDefault(false)
+    fun isPlaylistUrl(url: String): Boolean = runCatching { service.playlistLHFactory.acceptUrl(url) }.getOrDefault(false)
 
     fun stream(url: String): StreamInfo = StreamInfo.getInfo(service, url)
 
@@ -114,6 +116,19 @@ object Yt {
         return info to (if (tab != null) ChannelTabFeed(tab) else EmptyFeed)
     }
 
+    fun playlist(url: String): Pair<PlaylistInfo, Feed> {
+        val info = PlaylistInfo.getInfo(service, url)
+        return info to PlaylistFeed(info)
+    }
+
+    /** Todos los vídeos de una lista de YouTube (hasta [max]), para descargarla entera. */
+    fun playlistAll(url: String, max: Int = 1000): List<VideoItem> {
+        val feed = PlaylistFeed(PlaylistInfo.getInfo(service, url))
+        val all = feed.first().toMutableList()
+        while (feed.hasMore && all.size < max) all += feed.next()
+        return all.distinctBy { it.url }.take(max)
+    }
+
     fun bestImage(images: List<Image>, targetHeight: Int = 360): String? =
         images.minByOrNull { abs((if (it.height > 0) it.height else targetHeight) - targetHeight) }?.url
 
@@ -155,6 +170,23 @@ object Yt {
         override fun next(): List<VideoItem> {
             val p = page ?: return emptyList()
             val more = SearchInfo.getMoreItems(service, handler, p)
+            page = more.nextPage
+            return toItems(more.items)
+        }
+    }
+
+    private class PlaylistFeed(private val info: PlaylistInfo) : Feed {
+        private var page: Page? = null
+        override val hasMore get() = Page.isValid(page)
+
+        override fun first(): List<VideoItem> {
+            page = info.nextPage
+            return toItems(info.relatedItems)
+        }
+
+        override fun next(): List<VideoItem> {
+            val p = page ?: return emptyList()
+            val more = PlaylistInfo.getMoreItems(service, info.url, p)
             page = more.nextPage
             return toItems(more.items)
         }
