@@ -1,6 +1,6 @@
 {
   "name": "youtube-clean",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Interfaz web privada y minimalista para buscar y reproducir vídeos públicos de YouTube: sin anuncios propios, sin rastreo propio y sin cuentas.",
   "type": "module",
@@ -19,6 +19,8 @@
     "check:connections": "node scripts/check-connections.mjs",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build && npm run check:connections",
     "e2e": "playwright test",
+    "local": "node local/server.mjs",
+    "local:dev": "node local/server.mjs --dev-origin http://127.0.0.1:5173",
     "audit": "npm audit --omit=dev"
   },
   "dependencies": {

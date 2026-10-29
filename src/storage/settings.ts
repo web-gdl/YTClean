@@ -14,6 +14,10 @@ export interface Settings {
   /** Idioma de los controles del reproductor oficial (parámetro hl). */
   playerLanguage: string;
   keepHistory: boolean;
+  /** URL del servicio local (vacío = el mismo origen que sirve la web). */
+  localServiceUrl: string;
+  /** Reproductor: oficial (iframe de youtube-nocookie.com) o local (servicio + <video>). */
+  playerMode: 'official' | 'local';
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,6 +30,8 @@ export const DEFAULT_SETTINGS: Settings = {
   captions: false,
   playerLanguage: 'es',
   keepHistory: false,
+  localServiceUrl: '',
+  playerMode: 'official',
 };
 
 const store = createStore<Settings>('settings', DEFAULT_SETTINGS);

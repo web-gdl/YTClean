@@ -8,6 +8,8 @@ import { ProviderError } from './types';
 export interface HttpOptions {
   signal?: AbortSignal | undefined;
   timeoutMs?: number | undefined;
+  method?: 'GET' | 'POST' | 'DELETE' | undefined;
+  headers?: Record<string, string> | undefined;
 }
 
 export class HttpError extends Error {
@@ -28,13 +30,13 @@ export async function fetchJson(url: string, opts: HttpOptions = {}): Promise<un
   opts.signal?.addEventListener('abort', onAbort, { once: true });
   try {
     const res = await fetch(url, {
-      method: 'GET',
+      method: opts.method ?? 'GET',
       mode: 'cors',
       credentials: 'omit',
       referrerPolicy: 'no-referrer',
       redirect: 'follow',
       cache: 'default',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: 'application/json', ...(opts.headers ?? {}) },
       signal: controller.signal,
     });
     const text = await res.text();

@@ -17,7 +17,7 @@ const parseOnly = new Set(['youtu.be', 'youtube.com', 'm.youtube.com', 'music.yo
 // espacios de nombres XML: no son conexiones.
 const isPlaceholder = (host) => /(^|\.)(ejemplo\.org|example\.(com|org|net))$/.test(host) || host === 'www.w3.org' || host === 'json-schema.org';
 
-const scanDirs = ['src', 'dist', 'public', 'index.html'];
+const scanDirs = ['src', 'local', 'dist', 'public', 'index.html'];
 const exts = new Set(['.ts', '.tsx', '.js', '.mjs', '.html', '.css', '.webmanifest', '.json', '.svg']);
 
 function* walk(path) {

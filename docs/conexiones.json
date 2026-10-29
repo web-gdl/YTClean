@@ -11,7 +11,7 @@
     {
       "host": "i.ytimg.com",
       "kind": "image",
-      "when": "Miniaturas de vídeos con el proveedor YouTube Data API y en el modo de enlace directo, si las miniaturas están activadas (Ajustes).",
+      "when": "Miniaturas de vídeos con el proveedor YouTube Data API y en el modo de enlace directo, si las miniaturas están activadas (Ajustes). En el modo local las pide el servicio de tu equipo y las reenvía al navegador.",
       "data": "Tu dirección IP y el ID del vídeo. No se envía referrer."
     },
     {
@@ -29,8 +29,8 @@
     {
       "host": "www.youtube.com",
       "kind": "link",
-      "when": "Nunca de forma automática. Solo si pulsas el enlace «Ver en YouTube» o un enlace de ayuda.",
-      "data": "Lo que YouTube recoja al visitarlo en tu navegador; la aplicación no envía referrer."
+      "when": "Nunca de forma automática desde el navegador: enlaces «Ver en YouTube» y de ayuda, solo al pulsarlos. En el modo local es el servicio de tu equipo (yt-dlp) quien lo consulta: ver «Servicio local» más abajo.",
+      "data": "Al pulsar un enlace: lo que YouTube recoja al visitarlo; la aplicación no envía referrer. Desde el servicio local: tu IP, el texto buscado y los IDs consultados, sin cuenta ni cookies."
     },
     {
       "host": "developers.google.com",
@@ -87,6 +87,12 @@
       "kind": "api+image",
       "when": "Solo si eliges el proveedor «Piped»: búsquedas, vídeos, canales, listas y miniaturas (reenviadas por el proxy de la instancia).",
       "data": "Tu dirección IP, el texto buscado y los IDs consultados. El operador de la instancia puede registrarlos; no es un servicio anónimo."
+    },
+    {
+      "name": "Servicio local en tu propio equipo (modo local, opcional)",
+      "kind": "api+image",
+      "when": "Solo si eliges el proveedor «Servicio local (yt-dlp)» o el reproductor «Local» en Ajustes, y tienes en marcha `npm run local` en tu máquina. El navegador habla únicamente con http://127.0.0.1:8787 (o la dirección que configures).",
+      "data": "El servicio ejecuta yt-dlp, que se conecta desde tu equipo a www.youtube.com (API interna y páginas; recibe tu IP, el texto buscado y los IDs), a *.googlevideo.com (los flujos de vídeo y audio, ligados a tu IP), a i.ytimg.com y yt3.googleusercontent.com (miniaturas y avatares). Sin cuenta, sin cookies, sin clave. yt-dlp puede necesitar descargar sus scripts de resolución (yt-dlp-ejs) desde GitHub o npm si así lo configuras. Este modo accede a YouTube por vías no admitidas por sus condiciones de servicio: uso personal y local."
     }
   ],
   "storage": [
@@ -101,6 +107,12 @@
       "what": "Lo que decida el reproductor oficial de YouTube (preferencias de reproducción, identificadores). Fuera del control de esta aplicación.",
       "when": "Al reproducir un vídeo.",
       "delete": "Borrando los datos de ese sitio en el navegador."
+    },
+    {
+      "where": "Disco de tu equipo (modo local): carpeta local/cache/ (o la indicada con --cache)",
+      "what": "Vídeos descargados en alta calidad (MP4) y un pequeño archivo de metadatos por vídeo (título, canal, duración, calidad, fecha).",
+      "when": "Solo cuando eliges una calidad «descargar a la caché» en el reproductor local.",
+      "delete": "Ajustes → «Vaciar caché» (con el servicio en marcha) o borrando la carpeta."
     }
   ],
   "cookies": "La aplicación no crea ninguna cookie. No puede impedir las que el reproductor oficial gestione en su propio origen.",

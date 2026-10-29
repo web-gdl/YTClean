@@ -2,11 +2,12 @@
 // en implementar DataProvider y registrarla aquí.
 import type { Settings } from '../storage/settings';
 import { InvidiousProvider } from './providers/invidious';
+import { LocalProvider } from './providers/local';
 import { PipedProvider } from './providers/piped';
 import { YouTubeDataApiProvider } from './providers/youtubeDataApi';
 import { ProviderError, type DataProvider, type ProviderId } from './types';
 
-export const PROVIDER_IDS: readonly ProviderId[] = ['none', 'youtube-data-api', 'invidious', 'piped'];
+export const PROVIDER_IDS: readonly ProviderId[] = ['none', 'youtube-data-api', 'invidious', 'piped', 'local'];
 
 /** Devuelve el proveedor configurado o null si el usuario no ha elegido ninguno. */
 export function createProvider(settings: Settings): DataProvider | null {
@@ -17,6 +18,8 @@ export function createProvider(settings: Settings): DataProvider | null {
       return settings.invidiousInstance ? new InvidiousProvider(settings.invidiousInstance) : null;
     case 'piped':
       return settings.pipedInstance ? new PipedProvider(settings.pipedInstance) : null;
+    case 'local':
+      return new LocalProvider(settings.localServiceUrl);
     case 'none':
       return null;
   }

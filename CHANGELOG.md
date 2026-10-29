@@ -1,5 +1,14 @@
 # Historial de cambios
 
+## 0.2.0 — 2026-10-29
+
+- **Modo local** (`local/`, `npm run local`): servicio Node sin dependencias que sirve la web y expone `/local/*` con yt-dlp como motor: búsqueda, canales y listas sin clave ni terceros; resolución de flujos; proxy con Range para reproducción inmediata y solo audio; descarga a caché en alta calidad (ffmpeg) con progreso; subtítulos VTT; miniaturas reenviadas.
+- **Reproductor local** con `<video>` nativo: calidad, solo audio, descarga y reproducción, subtítulos, velocidad, imagen en imagen, Media Session; cambio por vídeo entre reproductor local y oficial.
+- Nuevo proveedor «Servicio local (yt-dlp)» y ajustes de dirección del servicio, modo de reproductor y caché.
+- CSP: `media-src 'self'` (antes `'none'`). Inventario y página de privacidad actualizados con el servicio local.
+- Pruebas: servicio local completo con yt-dlp simulado (sin red), proveedor y reproductor local. 64 pruebas unitarias.
+- Correcciones menores: entrada de enlace directo sin validación `type=url`; respaldo de `color-mix` y `:has` para navegadores antiguos.
+
 ## 0.1.0 — 2026-10-29
 
 Primera versión.

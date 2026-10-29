@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { applyTheme, type Theme } from '../app/theme';
 import { S } from '../app/strings';
 import { ExternalLink } from '../components/Link';
 import { normalizeInstanceUrl } from '../data/http';
+import { LocalClient, type LocalStatus } from '../data/providers/local';
 import { createProvider } from '../data/registry';
 import { toProviderError, type ProviderId } from '../data/types';
 import { clearAll } from '../storage/localStore';
@@ -27,6 +28,52 @@ export function SettingsPage() {
   const [test, setTest] = useState<{ status: 'idle' | 'running' | 'ok' | 'error'; message?: string }>({ status: 'idle' });
   const [cleared, setCleared] = useState(false);
   const [instanceError, setInstanceError] = useState('');
+  const [localStatus, setLocalStatus] = useState<{ status: 'idle' | 'loading' | 'ok' | 'error'; data?: LocalStatus; message?: string }>({ status: 'idle' });
+  const [localUrlError, setLocalUrlError] = useState('');
+  const usesLocal = settings.provider === 'local' || settings.playerMode === 'local';
+
+  // Estado del servicio local, solo cuando el usuario lo ha activado.
+  useEffect(() => {
+    if (!usesLocal) return;
+    const controller = new AbortController();
+    const client = new LocalClient(settings.localServiceUrl);
+    client.status({ signal: controller.signal }).then(
+      (data) => {
+        if (!controller.signal.aborted) setLocalStatus({ status: 'ok', data });
+      },
+      (e: unknown) => {
+        if (!controller.signal.aborted) setLocalStatus({ status: 'error', message: toProviderError(e).message });
+      },
+    );
+    return () => {
+      controller.abort();
+    };
+  }, [usesLocal, settings.localServiceUrl]);
+
+  const setLocalUrl = (raw: string) => {
+    const value = raw.trim().replace(/\/+$/, '');
+    if (value === '') {
+      updateSettings({ localServiceUrl: '' });
+      setLocalUrlError('');
+      return;
+    }
+    if (!/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i.test(value)) {
+      setLocalUrlError('Debe ser una dirección local: http://127.0.0.1:8787');
+      return;
+    }
+    setLocalUrlError('');
+    updateSettings({ localServiceUrl: value });
+  };
+
+  const clearLocalCache = async () => {
+    if (!window.confirm(S.saved.confirmClear)) return;
+    try {
+      await new LocalClient(settings.localServiceUrl).cacheRemove();
+      setLocalStatus((prev) => (prev.data ? { ...prev, data: { ...prev.data, cache: { ...prev.data.cache, files: 0, bytes: 0 } } } : prev));
+    } catch {
+      /* se muestra el estado anterior */
+    }
+  };
 
   const setProvider = (provider: ProviderId) => {
     updateSettings({ provider });
@@ -88,6 +135,7 @@ export function SettingsPage() {
           <ProviderOption id="youtube-data-api" current={settings.provider} label={S.settings.provider.youtube} note={S.settings.provider.youtubeNote} onSelect={setProvider} />
           <ProviderOption id="invidious" current={settings.provider} label={S.settings.provider.invidious} note={S.settings.provider.invidiousNote} onSelect={setProvider} />
           <ProviderOption id="piped" current={settings.provider} label={S.settings.provider.piped} note={S.settings.provider.pipedNote} onSelect={setProvider} />
+          <ProviderOption id="local" current={settings.provider} label={S.settings.provider.local} note={S.settings.provider.localNote} onSelect={setProvider} />
         </fieldset>
 
         {settings.provider === 'youtube-data-api' ? (
@@ -156,6 +204,41 @@ export function SettingsPage() {
           </div>
         ) : null}
 
+        {usesLocal ? (
+          <div className="field">
+            <label htmlFor="local-url">{S.settings.localUrl}</label>
+            <input
+              id="local-url"
+              type="text"
+              inputMode="url"
+              className="input"
+              defaultValue={settings.localServiceUrl}
+              onBlur={(e) => setLocalUrl(e.target.value)}
+              placeholder="(mismo origen)"
+              autoComplete="off"
+              spellCheck={false}
+            />
+            {localUrlError ? <p className="status status--error small">{localUrlError}</p> : null}
+            <p className="muted small">{S.settings.localUrlHelp}</p>
+            {localStatus.status === 'ok' && localStatus.data ? (
+              <p className="status status--ok small" role="status">
+                Servicio local {localStatus.data.service} · yt-dlp {localStatus.data.ytdlp ?? 'no encontrado'} · ffmpeg {localStatus.data.ffmpeg ? 'sí' : 'no'} · runtime JS {localStatus.data.jsRuntime} · {S.local.cache}:{' '}
+                {S.local.cacheSize(localStatus.data.cache.files, `${Math.round(localStatus.data.cache.bytes / 1_000_000)} MB`)}{' '}
+                {localStatus.data.cache.files > 0 ? (
+                  <button type="button" className="link-button" onClick={() => void clearLocalCache()}>
+                    {S.local.cacheClear}
+                  </button>
+                ) : null}
+              </p>
+            ) : null}
+            {localStatus.status === 'error' ? (
+              <p className="status status--error small" role="alert">
+                El servicio local no responde: {localStatus.message} — ejecuta <code>npm run local</code> y abre la web desde él.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
         {settings.provider !== 'none' ? (
           <div className="field">
             <button type="button" className="button" onClick={() => void runTest()} disabled={test.status === 'running'}>
@@ -221,6 +304,23 @@ export function SettingsPage() {
 
       <section className="panel">
         <h2 className="panel__title">{S.settings.playerSection}</h2>
+        <fieldset className="choices">
+          <legend>{S.settings.playerMode}</legend>
+          {(
+            [
+              ['official', S.settings.playerOfficial, S.settings.playerOfficialNote],
+              ['local', S.settings.playerLocal, S.settings.playerLocalNote],
+            ] as ['official' | 'local', string, string][]
+          ).map(([value, label, note]) => (
+            <label key={value} className={settings.playerMode === value ? 'choice choice--block choice--selected' : 'choice choice--block'}>
+              <input type="radio" name="playerMode" value={value} checked={settings.playerMode === value} onChange={() => updateSettings({ playerMode: value })} />
+              <span>
+                <strong>{label}</strong>
+                <span className="choice__note">{note}</span>
+              </span>
+            </label>
+          ))}
+        </fieldset>
         <label className="choice">
           <input type="checkbox" checked={settings.captions} onChange={(e) => updateSettings({ captions: e.target.checked })} />
           {S.settings.captions}

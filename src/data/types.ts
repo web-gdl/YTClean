@@ -59,7 +59,7 @@ export interface RequestOptions {
   signal?: AbortSignal | undefined;
 }
 
-export type ProviderId = 'none' | 'youtube-data-api' | 'invidious' | 'piped';
+export type ProviderId = 'none' | 'youtube-data-api' | 'invidious' | 'piped' | 'local';
 
 export interface DataProvider {
   readonly id: ProviderId;

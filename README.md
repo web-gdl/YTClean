@@ -10,7 +10,11 @@ Interfaz web privada y minimalista para buscar y reproducir vídeos públicos de
 
 Es un sitio estático (React + TypeScript + Vite) que puedes alojar en cualquier parte. No necesita backend.
 
-> **Lo que no puede hacer, dicho claramente.** Los vídeos se reproducen con el reproductor oficial de YouTube en modo de privacidad mejorada (`youtube-nocookie.com`), que se carga **solo cuando pulsas ▶**. Ese reproductor corre dentro de un iframe en un origen de Google: recibe tu IP, el ID del vídeo y el origen de la página, puede guardar datos en su propio origen y **puede mostrar los anuncios de YouTube dentro del vídeo**. YouTube Clean elimina todo lo que añade una web alrededor del vídeo, pero no altera ni bloquea el reproductor oficial. Quitar los anuncios de YouTube exige descargar los flujos de vídeo por métodos no admitidos por YouTube, cosa que esta aplicación no hace. Más detalles en [docs/privacidad.md](docs/privacidad.md).
+> **Dos formas de reproducir, dicho claramente.**
+> - **Por defecto**, los vídeos se reproducen con el reproductor oficial de YouTube en modo de privacidad mejorada (`youtube-nocookie.com`), que se carga **solo cuando pulsas ▶**. Ese reproductor corre dentro de un iframe en un origen de Google: recibe tu IP, el ID del vídeo y el origen de la página, puede guardar datos en su propio origen y **puede mostrar los anuncios de YouTube dentro del vídeo**. YouTube Clean elimina todo lo que añade una web alrededor del vídeo, pero no altera ni bloquea el reproductor oficial.
+> - **Modo local (opcional)**: un servicio en tu propio equipo usa yt-dlp para obtener los flujos y la web los reproduce con `<video>` nativo, sin el reproductor de YouTube ni sus anuncios, con solo audio, descarga en alta calidad, subtítulos y velocidad. Es la vía de NewPipe/FreeTube: no es conforme a las condiciones de YouTube y queda para uso personal y local. Ver [docs/modo-local.md](docs/modo-local.md).
+>
+> Más detalles en [docs/privacidad.md](docs/privacidad.md).
 
 ## Cómo funciona
 
@@ -22,10 +26,20 @@ Es un sitio estático (React + TypeScript + Vite) que puedes alojar en cualquier
 | **YouTube Data API v3** | Tu propia clave de Google Cloud, guardada solo en tu navegador | Google ve tu IP, tus búsquedas y tu clave | Alta (API oficial). Cuota: 10 000 unidades/día; cada búsqueda cuesta 100 |
 | **Invidious** | Una instancia pública o propia | La instancia ve tu IP y búsquedas; Google ve la IP de la instancia | Variable: YouTube bloquea instancias con frecuencia |
 | **Piped** | Una instancia pública o propia (URL de la API) | Igual que Invidious | Variable |
+| **Servicio local (yt-dlp)** | `npm run local` en tu equipo | Google ve la IP de tu equipo; sin cuenta, clave ni terceros | Depende de yt-dlp (actualízalo a menudo) |
 
 La fuente se puede cambiar en cualquier momento; [docs/proveedores.md](docs/proveedores.md) documenta los límites de cada una y cómo añadir otra.
 
-3. **Reproducción**: fachada con miniatura y botón ▶; al pulsar se inserta el reproductor oficial con `sandbox`, permisos mínimos y parámetros documentados (`rel=0`, sin anotaciones, subtítulos e idioma según tus ajustes). Controles, velocidad, calidad y subtítulos los ofrece el propio reproductor.
+3. **Reproducción**: fachada con miniatura y botón ▶; al pulsar se inserta el reproductor oficial con `sandbox`, permisos mínimos y parámetros documentados (`rel=0`, sin anotaciones, subtítulos e idioma según tus ajustes). Controles, velocidad, calidad y subtítulos los ofrece el propio reproductor. Con el **reproductor local** (Ajustes) se usa `<video>` nativo alimentado por el servicio local.
+
+## Modo local (NewPipe en tu navegador)
+
+```bash
+pip install -U "yt-dlp[default]"   # motor; ffmpeg opcional para 720p/1080p
+npm run build && npm run local     # http://127.0.0.1:8787
+```
+
+En Ajustes elige la fuente «Servicio local (yt-dlp)» y el reproductor «Local». Obtienes búsqueda sin clave, reproducción sin el reproductor de YouTube (sin sus anuncios), solo audio, descarga a caché en alta calidad con progreso, subtítulos, velocidad, imagen en imagen y controles del sistema. El servicio solo escucha en tu máquina, no reenvía cookies y exige una cabecera propia para que ninguna web ajena pueda usarlo. Detalles, límites y API en [docs/modo-local.md](docs/modo-local.md).
 
 ## Uso rápido
 
@@ -34,6 +48,7 @@ npm ci
 npm run dev        # http://127.0.0.1:5173
 npm run check      # lint + tipos + pruebas + build + inventario de conexiones
 npm run preview    # sirve dist/ con la CSP de producción
+npm run local      # modo local: sirve dist/ + API yt-dlp en http://127.0.0.1:8787
 ```
 
 Para publicar, copia `dist/` a cualquier alojamiento estático; [docs/despliegue.md](docs/despliegue.md) explica las cabeceras de seguridad, GitHub Pages y cómo restringir la CSP a los proveedores que uses.
@@ -67,15 +82,16 @@ Lee [docs/privacidad.md](docs/privacidad.md) para el inventario completo, el mod
 ## Estructura
 
 ```
+local/        servicio local opcional (Node sin dependencias): yt-dlp, proxy, caché
 src/
   app/        enrutador propio, textos, tema
   data/       modelo de datos, interfaz DataProvider, adaptadores (providers/), HTTP, utilidades
   storage/    localStorage con espacio de nombres: ajustes, guardados, historial
-  player/     URL del embed y fachada del reproductor
+  player/     URL del embed, fachada del reproductor oficial y reproductor local
   pages/      inicio, búsqueda, ver, canal, lista, guardados, ajustes, privacidad
   components/ cabecera, buscador, tarjetas, estados
 scripts/      csp.mjs (política única), postbuild.mjs, check-connections.mjs
-docs/         conexiones.json (inventario), privacidad, proveedores, arquitectura, despliegue
+docs/         conexiones.json (inventario), privacidad, proveedores, arquitectura, despliegue, modo-local
 tests/        pruebas unitarias y de componentes (Vitest + jsdom)
 e2e/          pruebas de extremo a extremo (Playwright, sin salir a Internet)
 ```

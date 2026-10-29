@@ -17,6 +17,7 @@ import {
   youtubeWatchUrl,
 } from '../data/util';
 import { useAsync, usePagedList } from '../hooks/useAsync';
+import { LocalPlayer } from '../player/LocalPlayer';
 import { VideoPlayer } from '../player/VideoPlayer';
 import { favorites, watchHistory } from '../storage/collections';
 import { useSettings } from '../storage/settings';
@@ -31,6 +32,11 @@ export function WatchPage() {
   const list = route.query.get('list') ?? undefined;
   // Abierta o cerrada por vídeo: al cambiar de vídeo vuelve a cerrada.
   const [descriptionOpenFor, setDescriptionOpenFor] = useState<string | null>(null);
+  // Reproductor elegido para este vídeo (permite cambiar entre local y oficial sin tocar los ajustes).
+  const [playerFor, setPlayerFor] = useState<{ id: string; mode: 'official' | 'local' } | null>(null);
+  const playerMode = playerFor?.id === id ? playerFor.mode : settings.playerMode;
+  // Metadatos obtenidos por el reproductor local (útiles cuando no hay fuente de datos).
+  const [localInfo, setLocalInfo] = useState<VideoDetails | null>(null);
 
   const details = useAsync<VideoDetails>(provider && VIDEO_ID_RE.test(id) ? (signal) => provider.getVideo(id, { signal }) : null, [id, provider]);
 
@@ -39,7 +45,7 @@ export function WatchPage() {
     [list, provider],
   );
 
-  const video: VideoDetails | null = details.state.status === 'success' ? details.state.data : null;
+  const video: VideoDetails | null = details.state.status === 'success' ? details.state.data : localInfo?.id === id ? localInfo : null;
   const saved = favorites.useList();
   const isSaved = saved.some((s) => s.id === id);
 
@@ -65,16 +71,34 @@ export function WatchPage() {
 
   return (
     <div className="page page--watch">
-      <div className="watch">
+      <div className={list ? 'watch watch--with-side' : 'watch'}>
         <div className="watch__main">
-          <VideoPlayer
-            videoId={id}
-            title={title}
-            start={start}
-            list={list}
-            thumbnailUrl={video?.thumbnailUrl ?? youtubeThumbnail(id)}
-            blockedMessage={blocked}
-          />
+          {playerMode === 'local' ? (
+            <LocalPlayer
+              videoId={id}
+              title={title}
+              start={start}
+              thumbnailUrl={video?.thumbnailUrl ?? youtubeThumbnail(id)}
+              onUseOfficial={() => setPlayerFor({ id, mode: 'official' })}
+              onVideoInfo={setLocalInfo}
+            />
+          ) : (
+            <VideoPlayer
+              videoId={id}
+              title={title}
+              start={start}
+              list={list}
+              thumbnailUrl={video?.thumbnailUrl ?? youtubeThumbnail(id)}
+              blockedMessage={blocked}
+            />
+          )}
+          {playerMode === 'official' && settings.playerMode === 'local' ? (
+            <p className="muted small">
+              <button type="button" className="link-button" onClick={() => setPlayerFor({ id, mode: 'local' })}>
+                {S.local.useLocal}
+              </button>
+            </p>
+          ) : null}
 
           {video?.ageRestricted ? <p className="notice notice--warn">{S.video.ageRestricted}</p> : null}
           {video?.regionRestricted ? <p className="notice">{S.video.regionNote}</p> : null}

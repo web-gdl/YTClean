@@ -43,8 +43,8 @@ export default tseslint.config(
   },
   {
     // Scripts de Node y configuración: sin información de tipos.
-    files: ['scripts/**/*.mjs', 'eslint.config.js', 'vite.config.ts', 'playwright.config.ts', 'e2e/**/*.ts'],
+    files: ['scripts/**/*.mjs', 'local/**/*.mjs', 'tests/fixtures/*.mjs', 'eslint.config.js', 'vite.config.ts', 'playwright.config.ts', 'e2e/**/*.ts'],
     extends: [...tseslint.configs.recommended],
-    languageOptions: { globals: { process: 'readonly', console: 'readonly' } },
+    languageOptions: { globals: { process: 'readonly', console: 'readonly', Buffer: 'readonly', fetch: 'readonly', AbortController: 'readonly', URL: 'readonly', setTimeout: 'readonly', clearTimeout: 'readonly', setInterval: 'readonly', clearInterval: 'readonly' } },
   },
 );

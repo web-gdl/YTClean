@@ -156,6 +156,7 @@ code {
   position: sticky;
   top: 0;
   z-index: 10;
+  background: var(--bg);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
@@ -312,7 +313,7 @@ code {
   border-color: transparent;
 }
 .button--primary:hover {
-  background: color-mix(in srgb, var(--accent) 88%, black);
+  filter: brightness(0.92);
 }
 .button--small {
   padding: 5px 10px;
@@ -723,4 +724,35 @@ code {
   * {
     transition: none !important;
   }
+}
+
+/* Reproductor local */
+.local-player .player video {
+  background: #000;
+}
+.player--audio .player__frame {
+  object-fit: contain;
+}
+.local-player__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+.local-player__control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+.input--small {
+  padding: 5px 8px;
+  font-size: 0.875rem;
+}
+.local-player__progress {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  accent-color: var(--accent);
 }

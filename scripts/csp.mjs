@@ -25,7 +25,8 @@ export function buildMetaCsp(opts = {}) {
     `frame-src ${EMBED_ORIGIN}`,
     "font-src 'self'",
     "manifest-src 'self'",
-    "media-src 'none'",
+    // Medios: solo del propio origen (archivos de la caché y flujos del servicio local).
+    "media-src 'self'",
     "object-src 'none'",
     "worker-src 'none'",
     "base-uri 'none'",
