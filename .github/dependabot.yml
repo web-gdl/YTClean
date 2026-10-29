@@ -1,0 +1,15 @@
+# Propuestas automáticas de actualización de dependencias (solo abre PR; el CI
+# y check:connections deciden si son seguras).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      desarrollo:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

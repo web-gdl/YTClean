@@ -56,6 +56,7 @@ export const S = {
     published: 'Publicado',
     duration: 'Duración',
     live: 'En directo',
+    captionsAvailable: 'Subtítulos disponibles',
     save: 'Guardar',
     unsave: 'Quitar de guardados',
     saved: 'Guardado',

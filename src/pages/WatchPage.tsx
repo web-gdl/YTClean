@@ -110,6 +110,7 @@ export function WatchPage() {
                 {video.viewCount !== undefined ? <span className="muted"> · {formatCount(video.viewCount)} {S.video.views}</span> : null}
                 {video.publishedAt ? <span className="muted"> · {formatDate(video.publishedAt)}</span> : null}
                 {video.durationSeconds ? <span className="muted"> · {formatDuration(video.durationSeconds)}</span> : null}
+                {video.captionsAvailable ? <span className="muted"> · {S.video.captionsAvailable}</span> : null}
               </p>
             </div>
           ) : null}
