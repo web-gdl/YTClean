@@ -24,6 +24,7 @@
 | 📚 **Biblioteca** | Guardados, listas de reproducción locales, cola (reproducir a continuación, añadir, saltar), canales e historial opcional. |
 | ⬇ **Descargas** | Audio (M4A) o vídeo MP4 en la calidad elegida, a `Descargas/YTClean`. |
 | 🚫 **Shorts** | Ocultos por defecto; se pueden mostrar desde Ajustes. |
+| 🌍 **País o región** | Elige de qué país es el contenido que te muestra YouTube (automático por defecto). |
 
 Mantén pulsado cualquier vídeo para ver todas sus acciones.
 

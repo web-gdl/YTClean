@@ -54,6 +54,28 @@ object Yt {
 
     fun stream(url: String): StreamInfo = StreamInfo.getInfo(service, url)
 
+    /** País del teléfono, o EE. UU. si el sistema no indica ninguno. */
+    fun deviceCountry(): String = java.util.Locale.getDefault().country.ifBlank { "US" }
+
+    /**
+     * País del contenido: decide qué resultados y en qué idioma muestra YouTube
+     * (como la opción «Región» de LibreTube). Vacío = el país del teléfono.
+     */
+    fun applyRegion(code: String) {
+        org.schabi.newpipe.extractor.NewPipe.setPreferredContentCountry(
+            org.schabi.newpipe.extractor.localization.ContentCountry(code.ifBlank { deviceCountry() }),
+        )
+    }
+
+    /** Países que admite YouTube, como (código, nombre en el idioma del teléfono), ordenados por nombre. */
+    fun supportedCountries(): List<Pair<String, String>> {
+        val locale = java.util.Locale.getDefault()
+        return service.supportedCountries.map { it.countryCode }
+            .distinct()
+            .map { it to java.util.Locale("", it).getDisplayCountry(locale).ifBlank { it } }
+            .sortedBy { it.second.lowercase(locale) }
+    }
+
     fun videoId(url: String): String? = runCatching { service.streamLHFactory.getId(url) }.getOrNull()
 
     /** Si se activan en Ajustes, se ocultan los Shorts de todas las listas. */

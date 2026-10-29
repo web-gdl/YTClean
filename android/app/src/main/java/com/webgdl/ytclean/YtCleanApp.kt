@@ -15,16 +15,16 @@ class YtCleanApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        val locale = Locale.getDefault()
-        val country = locale.country.ifBlank { "US" }
+        val library = Library(this)
+        val country = library.region.ifBlank { Yt.deviceCountry() }
         NewPipe.init(
             DownloaderImpl.init(),
-            Localization.fromLocale(locale),
+            Localization.fromLocale(Locale.getDefault()),
             ContentCountry(country),
         )
         // Tokens de integridad (BotGuard) generados en un WebView local, como NewPipe.
         YoutubeStreamExtractor.setPoTokenProvider(PoTokenProviderImpl)
-        Yt.hideShorts = Library(this).hideShorts
+        Yt.hideShorts = library.hideShorts
     }
 
     companion object {

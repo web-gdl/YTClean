@@ -40,6 +40,19 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.sharedPreferencesName = Library.NAME
             setPreferencesFromResource(R.xml.settings, rootKey)
+            findPreference<androidx.preference.ListPreference>("region")?.let { pref ->
+                val countries = Yt.supportedCountries()
+                val device = Yt.deviceCountry()
+                val deviceName = countries.firstOrNull { it.first == device }?.second ?: device
+                pref.entries = (listOf("Automático (país del teléfono: $deviceName)") + countries.map { "${it.second} (${it.first})" }).toTypedArray()
+                pref.entryValues = (listOf("") + countries.map { it.first }).toTypedArray()
+                if (pref.value == null) pref.value = ""
+                pref.setOnPreferenceChangeListener { _, value ->
+                    Yt.applyRegion(value as String)
+                    VideoActions.toast(requireContext(), "Las próximas búsquedas usarán la nueva región")
+                    true
+                }
+            }
             findPreference<androidx.preference.Preference>("clear_history")?.setOnPreferenceClickListener {
                 Library(requireContext()).clearHistory()
                 VideoActions.toast(requireContext(), "Historial borrado")

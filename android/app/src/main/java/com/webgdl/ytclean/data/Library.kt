@@ -28,6 +28,8 @@ class Library(context: Context) {
     val keepHistory: Boolean get() = sp.getBoolean("history", false)
     val sponsorBlock: Boolean get() = sp.getBoolean("sponsorblock", true)
     val captions: Boolean get() = sp.getBoolean("captions", false)
+    /** País del contenido (código ISO, p. ej. «MX»); vacío = el del teléfono. */
+    val region: String get() = sp.getString("region", "") ?: ""
 
     // ---- guardados ----
     fun saved(): List<VideoItem> = readVideos("saved")

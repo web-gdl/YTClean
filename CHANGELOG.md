@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 0.5.1 — 2026-10-29
+
+- Android: **país o región** del contenido en Ajustes (como en LibreTube): automático (país del teléfono) o cualquiera de los países que admite YouTube. Afecta a los resultados de búsqueda, novedades y textos de fecha; se aplica al momento.
+
+## 0.5.0 — 2026-10-29
+
+- Android: el vídeo en horizontal queda centrado y ocupa la pantalla; APK de 12,2 a 4,2 MB (R8, recursos solo es/en, sin metadatos de dependencias); limpieza de código; README con descarga directa e ilustraciones.
+
 ## 0.4.0 — 2026-10-29
 
 App Android, funciones al estilo LibreTube:

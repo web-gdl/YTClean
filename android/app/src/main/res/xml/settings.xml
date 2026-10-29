@@ -25,6 +25,12 @@
             app:title="SponsorBlock" />
     </PreferenceCategory>
     <PreferenceCategory app:title="Contenido">
+        <ListPreference
+            app:defaultValue=""
+            app:key="region"
+            app:title="País o región"
+            app:dialogTitle="País del contenido"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="hide_shorts"

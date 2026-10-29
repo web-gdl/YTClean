@@ -16,6 +16,7 @@
 - **Biblioteca**: guardados, listas de reproducción locales, canales suscritos, historial (opcional) y descargas.
 - **Descargas** de audio (M4A) o vídeo MP4 (vídeo y audio unidos sin recodificar) a Descargas/YTClean.
 - **Shorts** ocultos por defecto (desactivable en Ajustes).
+- **País o región** del contenido (Ajustes → Contenido): automático o cualquiera de los que admite YouTube.
 
 Mantén pulsado cualquier vídeo para ver todas las acciones.
 
@@ -25,7 +26,7 @@ Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin 
 
 ## Descargar e instalar
 
-1. **Releases** del repositorio → la más reciente (`YT Clean 0.4.0-N`) → `YTClean-0.4.0-N.apk`. También queda como artefacto `YTClean-apk` en la ejecución de **Actions → APK Android**.
+1. **Releases** del repositorio → la más reciente (`YT Clean 0.5.x-N`) → `YTClean.apk`. También queda como artefacto `YTClean-apk` en la ejecución de **Actions → APK Android**.
 2. Ábrelo en el teléfono y permite instalar apps de orígenes desconocidos.
 3. Para actualizar sin desinstalar, todas las versiones deben firmarse con la misma clave. Configúrala una vez como secreto del repositorio:
 
