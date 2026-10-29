@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 0.6.0 — 2026-10-29
+
+- Android: nueva **barra de acciones del reproductor**. Sustituye la fila de botones que había que deslizar (muchos usuarios no veían «Descargar», «A una lista» ni «Compartir») por cinco acciones fijas con icono y texto, todas visibles: Guardar · Calidad · Audio · Descargar · Más. «Más» abre una hoja inferior con Añadir a una lista, Compartir, Ver la cola e Ir al canal. Guardado y Solo audio se marcan con el color de acento cuando están activos.
+
 ## 0.5.1 — 2026-10-29
 
 - Android: **país o región** del contenido en Ajustes (como en LibreTube): automático (país del teléfono) o cualquiera de los países que admite YouTube. Afecta a los resultados de búsqueda, novedades y textos de fecha; se aplica al momento.

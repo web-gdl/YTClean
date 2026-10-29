@@ -3,23 +3,31 @@ package com.webgdl.ytclean.ui
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Rational
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
+import androidx.core.widget.TextViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.Player
 import androidx.media3.ui.AspectRatioFrameLayout
 import coil3.load
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.webgdl.ytclean.R
 import com.webgdl.ytclean.data.Library
@@ -66,15 +74,11 @@ class PlayerActivity : AppCompatActivity() {
         b.btnPrev.setOnClickListener { manager.previous() }
         b.btnNext.setOnClickListener { manager.next() }
         b.queueInfo.setOnClickListener { showQueue() }
-        b.btnShare.setOnClickListener {
-            val url = manager.state.value.current?.url ?: return@setOnClickListener
-            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url), getString(R.string.share)))
-        }
         b.btnSave.setOnClickListener {
             val item = manager.state.value.current ?: return@setOnClickListener
             updateSaveButton(library.toggleSaved(item))
         }
-        b.btnPlaylist.setOnClickListener { manager.state.value.current?.let { VideoActions.addToPlaylist(this, it) } }
+        b.btnMore.setOnClickListener { showMore() }
         b.btnDownload.setOnClickListener { chooseDownload() }
         b.descriptionToggle.setOnClickListener {
             descriptionExpanded = !descriptionExpanded
@@ -129,6 +133,7 @@ class PlayerActivity : AppCompatActivity() {
 
         b.btnAudio.isChecked = s.audioOnly
         b.btnQuality.text = if (s.height > 0) "${s.height}p" else getString(R.string.quality)
+        b.btnQuality.contentDescription = getString(R.string.quality) + if (s.height > 0) ": ${s.height}p" else ""
         val showArt = s.audioOnly && item?.thumbnail != null
         b.artwork.visibility = if (showArt) View.VISIBLE else View.GONE
         if (showArt) b.artwork.load(item?.thumbnail)
@@ -161,7 +166,9 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun updateSaveButton(saved: Boolean) {
+        b.btnSave.isChecked = saved
         b.btnSave.setText(if (saved) R.string.saved_done else R.string.save)
+        b.btnSave.setIconResource(if (saved) R.drawable.ic_bookmark else R.drawable.ic_bookmark_outline)
     }
 
     private fun chooseQuality() {
@@ -192,6 +199,49 @@ class PlayerActivity : AppCompatActivity() {
                 }
             }
             .show()
+    }
+
+    /** Acciones secundarias en una hoja inferior, al alcance del pulgar y con texto completo. */
+    private fun showMore() {
+        val s = manager.state.value
+        val item = s.current ?: return
+        val rows = mutableListOf<Triple<Int, String, () -> Unit>>(
+            Triple(R.drawable.ic_playlist_add, getString(R.string.add_to_playlist)) { VideoActions.addToPlaylist(this, item) },
+            Triple(R.drawable.ic_share, getString(R.string.share)) {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, item.url), getString(R.string.share)))
+            },
+        )
+        if (s.queue.size > 1) rows += Triple(R.drawable.ic_queue, getString(R.string.view_queue) + " (${s.queue.size})") { showQueue() }
+        item.channelUrl?.let { url ->
+            rows += Triple(R.drawable.ic_person, getString(R.string.go_to_channel) + if (item.channel.isNotBlank()) ": ${item.channel}" else "") { openChannel(this, url) }
+        }
+        val sheet = BottomSheetDialog(this)
+        val dp = resources.displayMetrics.density
+        val list = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(0, (8 * dp).toInt(), 0, (16 * dp).toInt())
+        }
+        val ripple = TypedValue().also { theme.resolveAttribute(android.R.attr.selectableItemBackground, it, true) }.resourceId
+        val fg = getColor(R.color.fg)
+        for ((icon, label, action) in rows) {
+            list.addView(TextView(this).apply {
+                text = label
+                textSize = 16f
+                setTextColor(fg)
+                maxLines = 1
+                ellipsize = TextUtils.TruncateAt.END
+                minHeight = (56 * dp).toInt()
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding((24 * dp).toInt(), 0, (24 * dp).toInt(), 0)
+                compoundDrawablePadding = (24 * dp).toInt()
+                setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0)
+                TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(fg))
+                setBackgroundResource(ripple)
+                setOnClickListener { sheet.dismiss(); action() }
+            })
+        }
+        sheet.setContentView(list)
+        sheet.show()
     }
 
     private fun showQueue() {

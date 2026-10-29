@@ -18,7 +18,7 @@
 - **Shorts** ocultos por defecto (desactivable en Ajustes).
 - **País o región** del contenido (Ajustes → Contenido): automático o cualquiera de los que admite YouTube.
 
-Mantén pulsado cualquier vídeo para ver todas las acciones.
+Debajo del vídeo, una barra fija muestra las acciones principales (Guardar, Calidad, Audio, Descargar) y «Más» abre el resto en una hoja inferior. Mantén pulsado cualquier vídeo de una lista para ver todas sus acciones.
 
 Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones y servicios en primer plano (reproducción y descargas). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
 

@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = (System.getenv("YC_VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("YC_VERSION_NAME") ?: "0.5.1"
+        versionName = System.getenv("YC_VERSION_NAME") ?: "0.6.0"
         // Solo los idiomas de la interfaz: las bibliotecas traen decenas más.
         resourceConfigurations += listOf("es", "en")
     }

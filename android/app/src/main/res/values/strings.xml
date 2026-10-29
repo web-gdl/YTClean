@@ -18,4 +18,11 @@
     <string name="subscribers">%1$s suscriptores</string>
     <string name="views">%1$s visualizaciones</string>
     <string name="about">YT Clean no tiene anuncios, cuentas, analítica ni telemetría. Los vídeos se obtienen directamente de YouTube desde este teléfono (con NewPipeExtractor): YouTube ve tu dirección IP, nada más. No está afiliado a YouTube ni a Google.</string>
+    <string name="audio_short">Audio</string>
+    <string name="download">Descargar</string>
+    <string name="more_short">Más</string>
+    <string name="more_actions">Más acciones</string>
+    <string name="add_to_playlist">Añadir a una lista</string>
+    <string name="view_queue">Ver la cola</string>
+    <string name="go_to_channel">Ir al canal</string>
 </resources>
