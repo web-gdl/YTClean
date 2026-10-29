@@ -1,60 +1,45 @@
-# App Android (APK)
+# App Android nativa (APK)
 
-El APK es la misma aplicación web empaquetada con [Capacitor](https://capacitorjs.com) en un WebView de Android. Lo compila GitHub Actions (`.github/workflows/android.yml`) en cada push a `main` o a mano desde la pestaña **Actions → APK Android → Run workflow**.
+`android/` es una app nativa en Kotlin, construida como NewPipe:
+
+- **Extracción en el propio teléfono** con [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) (la misma versión que usa NewPipe en desarrollo). Sin servidor, sin clave de API, sin cuenta y sin Termux.
+- **Reproducción nativa** con ExoPlayer (Media3): sin el reproductor de YouTube y sin sus anuncios. Los flujos adaptativos se reproducen con manifiestos DASH generados en el teléfono y peticiones como las de NewPipe (POST con `rn`).
+- **Tokens de integridad** (PoToken/BotGuard) generados en un WebView local, portado de NewPipe, para que YouTube no corte la reproducción.
+
+## Qué hace
+
+- Buscar vídeos (sin búsquedas mientras escribes, sin tendencias ni recomendaciones) con desplazamiento infinito.
+- Pegar o **compartir** un enlace de YouTube con la app (o abrirlo desde el navegador) para reproducirlo directamente.
+- Reproductor: calidad (360p…2160p), **solo audio**, pantalla completa al girar, **imagen en imagen**, compartir, descripción.
+- Canales: vídeos del canal con paginación.
+- Guardados: mantén pulsado un vídeo o usa «Guardar». Solo en el teléfono.
+- Ajustes: calidad por defecto, solo audio por defecto, borrar datos.
+
+Lo que **no** hace, a propósito: cuentas, historial, recomendaciones, comentarios, notificaciones, analítica, telemetría, publicidad. El único permiso es `INTERNET`. Los datos (guardados y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
+
+Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin cuenta ni cookies de sesión (como con NewPipe). Este acceso no es conforme a las condiciones de servicio de YouTube; es un proyecto personal.
 
 ## Descargar e instalar
 
-1. En el repositorio, **Releases** → la más reciente («YT Clean 0.2.0-N») → descarga `YTClean-0.2.0-N.apk`. También está como artefacto `YTClean-apk` en la ejecución del flujo.
-2. En el teléfono, abre el APK y permite instalar apps de «orígenes desconocidos» para el navegador o el gestor de archivos.
-3. Para que las versiones siguientes se instalen **encima** de la anterior (sin perder ajustes), todas deben firmarse con la misma clave. Configúrala una vez como secreto del repositorio:
+1. **Releases** del repositorio → la más reciente (`YT Clean 0.3.0-N`) → `YTClean-0.3.0-N.apk`. También queda como artefacto `YTClean-apk` en la ejecución de **Actions → APK Android**.
+2. Ábrelo en el teléfono y permite instalar apps de orígenes desconocidos.
+3. Para actualizar sin desinstalar, todas las versiones deben firmarse con la misma clave. Configúrala una vez como secreto del repositorio:
 
    ```bash
    keytool -genkeypair -keystore ytclean.keystore -alias ytclean -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=YT Clean"
    base64 -w0 ytclean.keystore > ytclean.keystore.b64     # en macOS: base64 -i ytclean.keystore
    ```
 
-   En GitHub: **Settings → Secrets and variables → Actions → New repository secret**:
-   - `YC_KEYSTORE_BASE64`: el contenido de `ytclean.keystore.b64`
-   - `YC_KEYSTORE_PASSWORD`: la contraseña que elegiste
-   - `YC_KEY_ALIAS`: `ytclean`
+   En GitHub: **Settings → Secrets and variables → Actions → New repository secret**: `YC_KEYSTORE_BASE64` (contenido de `ytclean.keystore.b64`), `YC_KEYSTORE_PASSWORD` y `YC_KEY_ALIAS` (`ytclean`). Guarda la clave fuera del repositorio. Sin esos secretos, cada APK lleva una clave temporal y hay que desinstalar el anterior.
 
-   Guarda `ytclean.keystore` fuera del repositorio (nunca lo subas). Sin esos secretos, cada APK se firma con una clave temporal distinta y para instalar uno nuevo hay que desinstalar el anterior.
+## Mantenimiento
 
-## Qué funciona dentro del APK
+YouTube cambia a menudo. Si la reproducción deja de funcionar, actualiza la versión de NewPipeExtractor en `android/app/build.gradle.kts` a la que use NewPipe en ese momento (`gradle/libs.versions.toml` del repositorio de NewPipe, clave `teamnewpipe-newpipe-extractor`) y, si cambió, el código de `potoken/` y de `player/YtMedia.kt` con su equivalente en NewPipe.
 
-| Función | Requisito |
-|---|---|
-| Reproductor oficial (youtube-nocookie.com) | Ninguno |
-| Búsqueda con Data API, Invidious o Piped | Configurarlo en Ajustes, igual que en la web |
-| **Modo local: búsqueda sin clave y reproducción sin anuncios** (solo audio, HQ, subtítulos…) | El servicio local en marcha en el propio teléfono con Termux (abajo) o en un PC de tu red |
+## Compilar en local
 
-En el APK, «Dirección del servicio local» viene ya rellenada con `http://127.0.0.1:8787`.
+Con el SDK de Android y Java 17+: `cd android && ./gradlew assembleRelease`.
 
-## Modo local en el teléfono (Termux)
+## Licencia
 
-Termux ejecuta Node, Python, yt-dlp y ffmpeg en Android. Instálalo desde F-Droid o GitHub (la versión de Google Play está desactualizada).
-
-```bash
-pkg update && pkg install git nodejs python ffmpeg
-pip install -U "yt-dlp[default]"
-git clone https://github.com/web-gdl/YTClean.git   # repositorio privado: usa un token o gh auth login
-cd YTClean && npm ci
-npm run local:android        # sirve la API en http://127.0.0.1:8787 para la app
-```
-
-Después, en YT Clean: Ajustes → fuente «Servicio local (yt-dlp)» y reproductor «Local». Deja Termux abierto mientras usas la app (o `termux-wake-lock` para que Android no lo suspenda). Actualiza yt-dlp de vez en cuando con `pip install -U "yt-dlp[default]"`.
-
-`npm run local:android` no necesita compilar la web: la app ya la lleva dentro; el servicio solo responde a `/local/*` con CORS para el origen de la app (`http://localhost`).
-
-## Detalles técnicos
-
-- `capacitor.config.json`: `appId com.webgdl.ytclean`, origen `http://localhost` (`androidScheme: "http"`) y tráfico en claro permitido, necesario para hablar con `http://127.0.0.1:8787`. La app no carga nada en claro fuera de esa dirección: la CSP del APK solo añade `http://127.0.0.1:8787` a `connect-src`, `img-src` y `media-src` (`npm run build:android`).
-- Botón Atrás: navega por el historial de la app y sale desde la portada (`@capacitor/app`).
-- Permisos Android: solo `INTERNET`.
-- Compilación local, si tienes Android Studio o el SDK: `npm run build:android && cd android && ./gradlew assembleRelease`.
-
-## Límites conocidos (sin probar todavía en un teléfono)
-
-- El reproductor oficial dentro de un WebView depende de que YouTube acepte el origen `http://localhost`; si muestra un error de configuración del reproductor (152/153), usa el reproductor local.
-- La pantalla completa del `<video>` nativo la gestiona el WebView de Capacitor; en algunos fabricantes puede no girar la pantalla automáticamente.
-- Si Android suspende Termux, el modo local dejará de responder hasta que vuelvas a abrirlo.
+La app Android incorpora NewPipeExtractor y código portado de NewPipe, ambos GPL-3.0-or-later, por lo que **la app Android se distribuye bajo GPL-3.0-or-later** (ver `android/LICENSE`). La aplicación web conserva su licencia.

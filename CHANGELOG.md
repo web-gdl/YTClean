@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 0.3.0 — 2026-10-29
+
+- **App Android nativa** (`android/`, Kotlin): sustituye al envoltorio Capacitor, que no era práctico (sin fuente configurada no buscaba). Busca y reproduce al instalarla: NewPipeExtractor en el teléfono, ExoPlayer/Media3 con manifiestos DASH, PoToken por WebView y peticiones como las de NewPipe. Canales, guardados, calidad, solo audio, pantalla completa, imagen en imagen y enlaces compartidos. Licencia GPL-3.0-or-later para la app Android.
+
 ## 0.2.0 — 2026-10-29
 
 - **APK Android** (Capacitor 8): flujo `android.yml` que compila y publica un APK firmado en Releases; botón Atrás nativo; icono propio; CSP del APK con acceso solo a `http://127.0.0.1:8787`; `npm run local:android` para el servicio en Termux. Pages pasa a ejecución manual (repositorio privado).

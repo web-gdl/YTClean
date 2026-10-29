@@ -1,7 +1,26 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">YT Clean</string>
-    <string name="title_activity_main">YT Clean</string>
-    <string name="package_name">com.webgdl.ytclean</string>
-    <string name="custom_url_scheme">com.webgdl.ytclean</string>
+    <string name="search_hint">Buscar en YouTube o pegar un enlace</string>
+    <string name="empty_home">Escribe lo que quieres ver. Sin anuncios, sin cuenta, sin recomendaciones.</string>
+    <string name="no_results">No se encontraron vídeos.</string>
+    <string name="saved">Guardados</string>
+    <string name="settings">Ajustes</string>
+    <string name="save">Guardar</string>
+    <string name="saved_done">Guardado</string>
+    <string name="quality">Calidad</string>
+    <string name="audio_only">Solo audio</string>
+    <string name="share">Compartir</string>
+    <string name="retry">Reintentar</string>
+    <string name="more">Mostrar más</string>
+    <string name="less">Mostrar menos</string>
+    <string name="saved_empty">Todavía no has guardado vídeos. Mantén pulsado un vídeo o usa «Guardar» al verlo.</string>
+    <string name="live">EN DIRECTO</string>
+    <string name="subscribers">%1$s suscriptores</string>
+    <string name="views">%1$s visualizaciones</string>
+    <string name="settings_quality">Calidad máxima de vídeo</string>
+    <string name="settings_audio">Reproducir solo audio por defecto</string>
+    <string name="settings_clear">Borrar guardados y ajustes</string>
+    <string name="settings_cleared">Datos borrados</string>
+    <string name="about">YT Clean no tiene anuncios, cuentas, analítica ni telemetría. Los vídeos se obtienen directamente de YouTube desde este teléfono (con NewPipeExtractor): YouTube ve tu dirección IP, nada más. No está afiliado a YouTube ni a Google.</string>
 </resources>

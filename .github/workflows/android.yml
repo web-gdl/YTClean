@@ -1,4 +1,4 @@
-# Compila el APK de YT Clean (Capacitor) y lo publica como artefacto y como
+# Compila la app Android nativa de YT Clean (Kotlin + NewPipeExtractor + Media3) y la publica como artefacto y como
 # Release del repositorio para descargarlo desde el teléfono.
 name: APK Android
 
@@ -21,22 +21,13 @@ jobs:
       YC_VERSION_CODE: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - run: npm ci
       - name: Versión
-        run: echo "YC_VERSION_NAME=$(node -p "require('./package.json').version")-${{ github.run_number }}" >> "$GITHUB_ENV"
-      - name: Compilar la web para Android y sincronizar
-        run: npm run build:android
-      - name: Comprobar el inventario de conexiones
-        run: npm run check:connections
+        run: echo "YC_VERSION_NAME=0.3.0-${{ github.run_number }}" >> "$GITHUB_ENV"
       - name: Preparar la clave de firma
         env:
           KEYSTORE_B64: ${{ secrets.YC_KEYSTORE_BASE64 }}
@@ -70,7 +61,7 @@ jobs:
           code=${PIPESTATUS[0]}
           if [ "$code" -ne 0 ]; then
             # Publica el motivo del fallo como anotación (legible sin descargar el registro).
-            msg=$(grep -A 25 -E 'What went wrong|FAILURE:|error:' "$RUNNER_TEMP/gradle.log" | head -60 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            msg=$( { grep -E '^e: ' "$RUNNER_TEMP/gradle.log" | sed 's#file:///home/runner/work/[^/]*/[^/]*/##' | head -40; grep -A 15 'What went wrong' "$RUNNER_TEMP/gradle.log" | head -30; } | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
             echo "::error title=Gradle::${msg}"
           fi
           exit "$code"
@@ -90,5 +81,5 @@ jobs:
         run: |
           gh release create "apk-${YC_VERSION_NAME}" out/*.apk \
             --title "YT Clean ${YC_VERSION_NAME}" \
-            --notes "APK compilado automáticamente desde ${GITHUB_SHA::7}. Instálalo en Android (permite «orígenes desconocidos»). El modo local necesita Termux con \`npm run local:android\`; ver docs/android.md." \
+            --notes "APK compilado automáticamente desde ${GITHUB_SHA::7}. Instálalo en Android (permite «orígenes desconocidos»). Busca y reproduce sin anuncios, sin cuenta y sin configurar nada. Ver docs/android.md." \
             --latest
