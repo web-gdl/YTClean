@@ -5,6 +5,14 @@ name: APK Android
 on:
   push:
     branches: [main]
+    # Los cambios solo de documentación o de flujos no generan un APK nuevo
+    # (para recompilar sin cambios de código: Actions → APK Android → Run workflow).
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/workflows/android.yml'
+      - '.github/workflows/release-notes.yml'
+      - 'scripts/release-notes.sh'
   workflow_dispatch:
 
 permissions:
@@ -80,15 +88,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cat > notes.md <<NOTES
-          **Descarga directa:** [YTClean.apk](https://github.com/${{ github.repository }}/releases/latest/download/YTClean.apk) · Android 7.0+
-
-          Vídeos de YouTube sin anuncios, sin cuenta y sin rastreo: búsqueda, reproductor nativo, segundo plano con controles en la notificación, SponsorBlock, suscripciones locales, listas y cola, subtítulos y descargas.
-
-          Instálalo permitiendo «orígenes desconocidos». Si la versión anterior se firmó con otra clave, desinstálala antes (ver docs/android.md).
-
-          Compilado automáticamente desde ${GITHUB_SHA::7}.
-          NOTES
+          scripts/release-notes.sh "${{ github.repository }}" "$GITHUB_SHA" "$(du -h out/YTClean.apk | cut -f1)" > notes.md
           gh release create "apk-${YC_VERSION_NAME}" out/YTClean.apk \
             --title "YT Clean ${YC_VERSION_NAME}" \
             --notes-file notes.md \

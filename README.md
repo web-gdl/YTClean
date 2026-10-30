@@ -10,6 +10,8 @@
   &nbsp;·&nbsp; Android 7.0 o superior
 </p>
 
+**Última versión: 0.8.1** (30-oct-2026) · abre cualquier enlace de YouTube y puede quedar como app predeterminada para ellos. En 0.8.0 llegó la descarga en **MP3** de vídeos y listas enteras. Ver [novedades](#novedades).
+
 > Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
 ## Qué hace
@@ -25,6 +27,8 @@
 | ⬇ **Descargas** | Audio (M4A) o vídeo MP4 en la calidad elegida, a `Descargas/YTClean`. |
 | 🎵 **MP3** | Convierte vídeos o **listas enteras** a MP3 en el teléfono (LAME), con título, artista, álbum y portada, en `Música/YTClean`. |
 | 🚫 **Shorts** | Ocultos por defecto; se pueden mostrar desde Ajustes. |
+| 🔗 **Enlaces** | Abre cualquier enlace de YouTube (youtube.com, youtu.be, m./music.youtube.com…): vídeos, Shorts, listas, canales y búsquedas. Se puede dejar como app predeterminada para esos enlaces. |
+| 🚗 **Autoestéreo** | Diseño propio para pantallas anchas como los alps 8227L (1024×600): navegación lateral, cuadrícula y reproductor en dos paneles. |
 | 🌍 **País o región** | Elige de qué país es el contenido que te muestra YouTube (automático por defecto). |
 
 Mantén pulsado cualquier vídeo para ver todas sus acciones.
@@ -44,6 +48,18 @@ En pantallas anchas en horizontal la app cambia sola de diseño: riel de navegac
   <img src="docs/img/8227l-buscar.png" width="420" alt="Búsqueda en el autoestéreo">
   <img src="docs/img/8227l-reproductor.png" width="420" alt="Reproductor en el autoestéreo">
 </p>
+
+## Novedades
+
+| Versión | Cambios |
+|---|---|
+| **0.8.1** | Abre cualquier enlace de YouTube (todas las rutas y dominios, `vnd.youtube:`); ajuste **Enlaces de YouTube** para dejar YT Clean como predeterminada. |
+| **0.8.0** | **MP3** de vídeos y listas (locales o de YouTube) convertidos en el teléfono con LAME, con título, artista, álbum y portada, en `Música/YTClean`. Pantalla de listas de YouTube. |
+| **0.7.0** | Diseño para autoestéreos 8227L y tabletas en horizontal. |
+| **0.6.0** | Barra de acciones del reproductor fija con icono y texto, y hoja «Más». |
+| **0.5.x** | País o región del contenido; vídeo centrado en horizontal; APK de 12 a 4 MB. |
+
+Detalle completo en [CHANGELOG.md](CHANGELOG.md).
 
 ## Privacidad
 

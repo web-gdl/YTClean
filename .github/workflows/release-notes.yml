@@ -1,0 +1,36 @@
+# Actualiza las notas de la última versión publicada en Releases cuando cambia CHANGELOG.md
+# (sin volver a compilar el APK). Solo si la última versión coincide con la primera del CHANGELOG.
+name: Notas de la versión
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'CHANGELOG.md'
+      - 'scripts/release-notes.sh'
+      - '.github/workflows/release-notes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  notas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actualizar la última versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --json tagName -q .tagName)
+          version=$(grep -m1 '^## ' CHANGELOG.md | sed 's/^## //; s/ .*//')
+          case "$tag" in
+            "apk-$version-"*) ;;
+            *) echo "::notice::La última versión ($tag) no es la $version del CHANGELOG; se actualizará al publicarse."; exit 0 ;;
+          esac
+          sha=$(gh api "repos/${{ github.repository }}/git/ref/tags/$tag" -q .object.sha 2>/dev/null || echo "$GITHUB_SHA")
+          size=$(gh release view "$tag" --json assets -q '.assets[0].size' | awk '{printf "%.1f MB", $1/1048576}')
+          scripts/release-notes.sh "${{ github.repository }}" "$sha" "$size" > notes.md
+          gh release edit "$tag" --notes-file notes.md
+          echo "::notice::Notas de $tag actualizadas."
