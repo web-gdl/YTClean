@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleIntent(intent)
+        if (savedInstanceState == null && intent?.action == Intent.ACTION_MAIN) offerDefaultLinks()
     }
 
     override fun onResume() {
@@ -138,12 +139,43 @@ class MainActivity : AppCompatActivity() {
 
     /** Enlaces compartidos o abiertos con la app. */
     private fun handleIntent(intent: Intent?) {
-        val url = when (intent?.action) {
-            Intent.ACTION_SEND -> firstUrl(intent.getStringExtra(Intent.EXTRA_TEXT))
+        val raw = when (intent?.action) {
+            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let { text -> firstUrl(text) ?: text.trim().ifBlank { null }?.also { runSearch(it); return } }
             Intent.ACTION_VIEW -> intent.dataString
             else -> null
         } ?: return
-        if (!openYoutubeLink(this, url)) Toast.makeText(this, "Ese enlace no es un vídeo, una lista ni un canal de YouTube", Toast.LENGTH_LONG).show()
+        val url = YoutubeLinks.normalize(raw)
+        if (openYoutubeLink(this, url)) return
+        YoutubeLinks.searchQuery(url)?.let { runSearch(it); return }
+        // Otras páginas de YouTube (inicio, tendencias…): se queda en la portada de YT Clean.
+        if (!YoutubeLinks.isYoutubeHost(url)) {
+            Toast.makeText(this, "Ese enlace no es de YouTube", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    /** Busca un texto (enlaces de búsqueda o texto compartido sin enlace). */
+    private fun runSearch(query: String) {
+        b.bottomNav.selectedItemId = R.id.nav_home
+        b.searchInput.setText(query)
+        search.show(Yt.search(query))
+    }
+
+    /**
+     * Una sola vez (Android 12+): ofrece activar YT Clean para abrir los enlaces de YouTube,
+     * que Android no permite activar desde la propia app.
+     */
+    private fun offerDefaultLinks() {
+        val prefs = getSharedPreferences(Library.NAME, MODE_PRIVATE)
+        if (prefs.getBoolean("links_offered", false)) return
+        val status = YoutubeLinks.defaultStatus(this) ?: return
+        if (status.first >= status.second) return
+        prefs.edit().putBoolean("links_offered", true).apply()
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle("Abrir enlaces de YouTube con YT Clean")
+            .setMessage("Para que los enlaces de YouTube (de WhatsApp, el navegador, etc.) se abran aquí sin preguntar, Android pide activarlo una vez en sus ajustes.\n\n" + YoutubeLinks.instructions() + "\n\nTambién está en Ajustes → Enlaces de YouTube.")
+            .setPositiveButton("Activar") { _, _ -> YoutubeLinks.openSettings(this) }
+            .setNegativeButton("Ahora no", null)
+            .show()
     }
 
     private fun submit(raw: String) {
@@ -151,8 +183,9 @@ class MainActivity : AppCompatActivity() {
         if (query.isEmpty()) return
         getSystemService(InputMethodManager::class.java)?.hideSoftInputFromWindow(b.searchInput.windowToken, 0)
         b.searchInput.clearFocus()
-        val url = firstUrl(query)
+        val url = firstUrl(query)?.let { YoutubeLinks.normalize(it) }
         if (url != null && openYoutubeLink(this, url)) return
+        url?.let { YoutubeLinks.searchQuery(it) }?.let { runSearch(it); return }
         search.show(Yt.search(query))
     }
 }

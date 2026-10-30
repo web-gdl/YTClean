@@ -18,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = (System.getenv("YC_VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("YC_VERSION_NAME") ?: "0.8.0"
+        versionName = System.getenv("YC_VERSION_NAME") ?: "0.8.1"
         // Solo los idiomas de la interfaz: las bibliotecas traen decenas más.
         resourceConfigurations += listOf("es", "en")
         // Codificador MP3 nativo (LAME): solo ARM, que es lo que usan teléfonos y autoestéreos.

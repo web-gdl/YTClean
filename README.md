@@ -59,7 +59,8 @@ Este acceso a YouTube no es conforme a sus condiciones de servicio. Es un proyec
 
 1. Descarga [`YTClean.apk`](https://github.com/web-gdl/YTClean/releases/latest/download/YTClean.apk) en el teléfono. El repositorio es privado: tienes que haber iniciado sesión en GitHub con una cuenta con acceso.
 2. Ábrelo y permite instalar apps de orígenes desconocidos.
-3. Acepta las notificaciones para ver los controles de reproducción y el progreso de las descargas.
+3. Para que los enlaces de YouTube se abran siempre con YT Clean: **Ajustes → Enlaces de YouTube** (en Android 12+ se activa en «Abrir de forma predeterminada» → «Añadir enlace»).
+4. Acepta las notificaciones para ver los controles de reproducción y el progreso de las descargas.
 
 Cada push a `main` compila y publica un APK nuevo en **Releases** (GitHub Actions, `.github/workflows/android.yml`). Para que las actualizaciones se instalen encima de la versión anterior, configura una clave de firma fija como secreto del repositorio. Los pasos están en [docs/android.md](docs/android.md).
 

@@ -39,20 +39,33 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <!-- Abrir enlaces de YouTube con YT Clean. -->
+            <!--
+              Abrir cualquier enlace de YouTube con YT Clean (todas las rutas: vídeos, Shorts,
+              directos, listas, canales, búsquedas…). Android 12+ no deja que una app no
+              verificada por el dominio lo abra sola: el usuario lo activa en «Abrir de forma
+              predeterminada» (la app lo guía desde Ajustes → Enlaces de YouTube).
+            -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" />
+                <data android:scheme="http" />
                 <data android:host="youtube.com" />
                 <data android:host="www.youtube.com" />
                 <data android:host="m.youtube.com" />
+                <data android:host="music.youtube.com" />
                 <data android:host="youtu.be" />
-                <data android:pathPrefix="/watch" />
-                <data android:pathPrefix="/shorts" />
-                <data android:pathPrefix="/live" />
-                <data android:pathPrefix="/" />
+                <data android:host="www.youtu.be" />
+                <data android:host="youtube-nocookie.com" />
+                <data android:host="www.youtube-nocookie.com" />
+            </intent-filter>
+            <!-- Enlaces de la app de YouTube (vnd.youtube:ID). -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vnd.youtube" />
             </intent-filter>
         </activity>
 

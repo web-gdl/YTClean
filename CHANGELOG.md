@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 0.8.1 — 2026-10-30
+
+- Android: **YT Clean puede abrir cualquier enlace de YouTube por defecto**: todas las rutas de youtube.com, www/m/music.youtube.com, youtu.be y youtube-nocookie.com (http y https) y los enlaces `vnd.youtube:`. Las búsquedas (`/results?search_query=`) se abren como búsqueda y el texto compartido sin enlace se busca.
+- Nuevo ajuste **Enlaces → Abrir enlaces de YouTube con YT Clean** que muestra si está activado y lleva a «Abrir de forma predeterminada» (Android 12+ solo permite activarlo al usuario). Al abrir la app por primera vez se ofrece una vez.
+
 ## 0.8.0 — 2026-10-29
 
 - Android: **descarga en MP3** de vídeos y listas de reproducción, convertida en el propio teléfono (sin servidor ni FFmpeg): el audio se decodifica con MediaCodec y se codifica con **LAME 3.100** (nativo, ARM). Etiqueta ID3v2.3 con título, canal (artista), lista (álbum) y portada; se guarda en **Música/YTClean** (y en una subcarpeta con el nombre de la lista), visible para los reproductores de música.

@@ -8,6 +8,7 @@
 
 ## Qué hace
 
+- **Enlaces de YouTube por defecto**: abre cualquier enlace de youtube.com, youtu.be, m./music.youtube.com y youtube-nocookie.com. En Android 12+ hay que activarlo una vez en Ajustes → Enlaces de YouTube (lleva a «Abrir de forma predeterminada» → «Añadir enlace»); si la app oficial de YouTube los tiene asignados, primero hay que desactivar en ella «Abrir enlaces compatibles». En Android 11 o anterior basta con elegir YT Clean y «Siempre».
 - **Buscar** (solo al enviar; sin tendencias ni recomendaciones), con desplazamiento infinito. Abre enlaces compartidos o pegados.
 - **Reproductor nativo**: calidad 144p–2160p, solo audio, subtítulos, pantalla completa, imagen en imagen y **segundo plano con controles en la notificación**.
 - **Cola**: «Reproducir a continuación», «Añadir a la cola», ver y saltar en la cola, avance automático.

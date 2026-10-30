@@ -37,6 +37,18 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+        override fun onResume() {
+            super.onResume()
+            // Estado actualizado al volver de los ajustes del sistema.
+            findPreference<androidx.preference.Preference>("default_links")?.summary =
+                when (val st = YoutubeLinks.defaultStatus(requireContext())) {
+                    null -> "Al abrir un enlace, elige YT Clean y «Siempre». Toca para ver cómo"
+                    else -> if (st.first >= st.second) "Activado: los enlaces de YouTube se abren aquí"
+                    else if (st.first == 0) "Desactivado. Toca para activarlo"
+                    else "Activado para ${st.first} de ${st.second} dominios. Toca para añadir el resto"
+                }
+        }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.sharedPreferencesName = Library.NAME
             setPreferencesFromResource(R.xml.settings, rootKey)
@@ -52,6 +64,15 @@ class SettingsActivity : AppCompatActivity() {
                     VideoActions.toast(requireContext(), "Las próximas búsquedas usarán la nueva región")
                     true
                 }
+            }
+            findPreference<androidx.preference.Preference>("default_links")?.setOnPreferenceClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Abrir enlaces de YouTube")
+                    .setMessage(YoutubeLinks.instructions())
+                    .setPositiveButton("Ir a los ajustes") { _, _ -> YoutubeLinks.openSettings(requireContext()) }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+                true
             }
             findPreference<androidx.preference.Preference>("clear_history")?.setOnPreferenceClickListener {
                 Library(requireContext()).clearHistory()

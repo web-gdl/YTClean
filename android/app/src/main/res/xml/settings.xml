@@ -24,6 +24,11 @@
             app:summary="Salta patrocinios, autopromoción y recordatorios de suscripción (base comunitaria sponsor.ajay.app; solo se envía un prefijo del ID del vídeo)"
             app:title="SponsorBlock" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="Enlaces">
+        <Preference
+            app:key="default_links"
+            app:title="Abrir enlaces de YouTube con YT Clean" />
+    </PreferenceCategory>
     <PreferenceCategory app:title="Descargas">
         <ListPreference
             app:defaultValue="192"
