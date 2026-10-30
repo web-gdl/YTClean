@@ -71,7 +71,7 @@ jobs:
           # Nombre fijo: el enlace releases/latest/download/YTClean.apk no cambia entre versiones.
           cp android/app/build/outputs/apk/release/app-release.apk out/YTClean.apk
           echo "::notice title=APK::YTClean ${YC_VERSION_NAME}: $(du -h out/YTClean.apk | cut -f1)"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: YTClean-apk
           path: out/*.apk
