@@ -10,7 +10,7 @@
   &nbsp;·&nbsp; Android 7.0 o superior
 </p>
 
-**Última versión: 0.9.0** (3-nov-2026) · **enviar el vídeo a una Roku** de tu red. Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
+**Última versión: 0.9.1** (3-nov-2026) · **enviar el vídeo a una Roku** de tu red (0.9.0), ahora entrando como invitado en su app de YouTube. Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
 
 > Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
@@ -54,6 +54,7 @@ En pantallas anchas en horizontal la app cambia sola de diseño: riel de navegac
 
 | Versión | Cambios |
 |---|---|
+| **0.9.1** | Enviar a Roku entra solo como **invitado** en YouTube de la Roku cuando pide «Agregar una cuenta». |
 | **0.9.0** | **Enviar a Roku** (app de YouTube de la Roku o, sin anuncios, su reproductor; experimental), con búsqueda en la Wi-Fi o IP manual. |
 | **0.8.1** | Abre cualquier enlace de YouTube (todas las rutas y dominios, `vnd.youtube:`); ajuste **Enlaces de YouTube** para dejar YT Clean como predeterminada. |
 | **0.8.0** | **MP3** de vídeos y listas (locales o de YouTube) convertidos en el teléfono con LAME, con título, artista, álbum y portada, en `Música/YTClean`. Pantalla de listas de YouTube. |

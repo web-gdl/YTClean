@@ -110,7 +110,7 @@ object RokuCast {
             .setTitle("Ver en ${device.name}")
             .setItems(
                 arrayOf(
-                    "En la app de YouTube de la Roku (recomendado; puede mostrar anuncios)",
+                    "En la app de YouTube de la Roku (recomendado; entra como invitado y puede mostrar anuncios)",
                     "Sin anuncios, con el reproductor de la Roku (experimental, calidad 360p)",
                 ),
             ) { _, which -> send(activity, device, item, info, adFree = which == 1) }
@@ -122,6 +122,7 @@ object RokuCast {
         activity.lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
                 runCatching {
+                    var confirmed = true
                     if (adFree) {
                         val info = known ?: Yt.stream(item.url)
                         val live = YtMedia.isLive(info)
@@ -130,17 +131,28 @@ object RokuCast {
                         Roku.playUrl(activity, device.ip, url, info.name, hls = live)
                     } else {
                         val id = Yt.videoId(item.url) ?: error("Enlace de vídeo no válido")
-                        Roku.openInYoutube(activity, device.ip, id)
+                        confirmed = Roku.openInYoutube(activity, device.ip, id) { msg ->
+                            activity.runOnUiThread { VideoActions.toast(activity, msg) }
+                        }
                     }
+                    confirmed
                 }
             }
-            result.onSuccess {
+            result.onSuccess { confirmed ->
                 activity.getSharedPreferences(PREFS, AppCompatActivity.MODE_PRIVATE).edit()
                     .putString("ip", device.ip).putString("name", device.name).apply()
                 // Se pausa aquí para no oírlo dos veces.
                 val manager = PlaybackManager.get(activity)
                 if (manager.state.value.current?.url == item.url) manager.player.pause()
-                VideoActions.toast(activity, "Reproduciendo en ${device.name}")
+                if (confirmed) {
+                    VideoActions.toast(activity, "Reproduciendo en ${device.name}")
+                } else {
+                    MaterialAlertDialogBuilder(activity)
+                        .setTitle("Enviado a ${device.name}")
+                        .setMessage("La Roku no confirmó que el vídeo se esté reproduciendo. Si YouTube sigue en «Agregar una cuenta», elige «Mirar como invitado» con el control y vuelve a enviarlo: con la app ya abierta, el vídeo entra directo.")
+                        .setPositiveButton("Entendido", null)
+                        .show()
+                }
             }.onFailure { VideoActions.toast(activity, it.message ?: "No se pudo enviar a la Roku") }
         }
     }

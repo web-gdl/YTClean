@@ -96,10 +96,52 @@ object Roku {
         return tag("user-device-name") ?: tag("friendly-device-name") ?: tag("model-name")?.let { "$it ($ip)" } ?: "Roku ($ip)"
     }
 
-    /** Abre el vídeo en la app de YouTube de la Roku (la que la Roku tenga instalada). */
-    fun openInYoutube(context: Context, ip: String, videoId: String) {
-        request(context, ip, "POST", "/launch/$YOUTUBE_APP?contentId=${enc(videoId)}&mediaType=movie")
+    /**
+     * Abre el vídeo en la app de YouTube de la Roku. Si esa app estaba cerrada, al arrancar se
+     * queda en «Agregar una cuenta» / «Mirar como invitado» y descarta el vídeo: entonces entra
+     * como invitado con las teclas del control (Abajo → OK) y vuelve a enviar el vídeo, ya con
+     * la app abierta. Antes de cada pulsación comprueba si ya se reproduce, para no tocar un
+     * vídeo en curso. Bloqueante (hasta ~30 s). Devuelve true si la Roku confirma que reproduce
+     * (o si la app ya estaba abierta); [onStatus] informa del paso actual.
+     */
+    fun openInYoutube(context: Context, ip: String, videoId: String, guest: Boolean = true, onStatus: (String) -> Unit = {}): Boolean {
+        val launch = "/launch/$YOUTUBE_APP?contentId=${enc(videoId)}&mediaType=movie"
+        val wasOpen = activeApp(context, ip) == YOUTUBE_APP
+        request(context, ip, "POST", launch)
+        if (!guest || wasOpen) return true
+        onStatus("Abriendo YouTube en la Roku…")
+        // Arranque en frío: 5-10 s en muchas Roku hasta que YouTube es la app activa.
+        val deadline = System.currentTimeMillis() + 15_000
+        while (activeApp(context, ip) != YOUTUBE_APP && System.currentTimeMillis() < deadline) Thread.sleep(500)
+        Thread.sleep(5000)
+        repeat(2) {
+            if (isPlaying(context, ip)) return true
+            onStatus("Entrando como invitado en YouTube de la Roku…")
+            key(context, ip, "Down")
+            Thread.sleep(700)
+            key(context, ip, "Select")
+            Thread.sleep(3500)
+            request(context, ip, "POST", launch)
+            Thread.sleep(5000)
+        }
+        return isPlaying(context, ip)
     }
+
+    /** Pulsa una tecla del control remoto (Down, Select, Home…). */
+    fun key(context: Context, ip: String, key: String) {
+        request(context, ip, "POST", "/keypress/$key")
+    }
+
+    /** ID de la app en primer plano (o null). */
+    fun activeApp(context: Context, ip: String): String? = runCatching {
+        Regex("<app[^>]*\\bid=\"([^\"]+)\"").find(request(context, ip, "GET", "/query/active-app"))?.groupValues?.get(1)
+    }.getOrNull()
+
+    /** true si el reproductor de la Roku tiene un vídeo cargado (reproduciendo, en pausa o cargando). */
+    fun isPlaying(context: Context, ip: String): Boolean = runCatching {
+        val state = Regex("<player[^>]*\\bstate=\"([^\"]+)\"").find(request(context, ip, "GET", "/query/media-player"))?.groupValues?.get(1)
+        state in setOf("play", "pause", "buffer", "open")
+    }.getOrDefault(false)
 
     /**
      * Reproduce una URL directa (MP4 o HLS) con el reproductor de la Roku, sin la app de YouTube

@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 0.9.1 — 2026-11-03
+
+- Android, **Enviar a Roku**: si la app de YouTube de la Roku estaba cerrada, al abrirse se quedaba en «Agregar una cuenta» y no reproducía el vídeo. Ahora YT Clean **entra como invitado** con las teclas del control (Abajo → OK en «Mirar como invitado») y vuelve a enviar el vídeo. Antes de pulsar nada comprueba si la Roku ya está reproduciendo (`query/media-player`), y si la app ya estaba abierta no pulsa ninguna tecla. Si la Roku no confirma la reproducción, explica qué hacer.
+
 ## 0.9.0 — 2026-11-03
 
 - Android: **Enviar a Roku**. Desde «Más» en el reproductor o con la pulsación larga de cualquier vídeo, busca las Roku de la red Wi-Fi (SSDP) o acepta su IP, y recuerda la última usada.
