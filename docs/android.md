@@ -18,6 +18,7 @@
 - **Descargas** de audio (M4A) o vídeo MP4 (vídeo y audio unidos sin recodificar) a Descargas/YTClean.
 - **MP3** de un vídeo o de una lista entera (local o de YouTube): se descarga el audio, se convierte en el teléfono con LAME (nativo) y se guarda con etiqueta ID3 (título, artista, álbum y portada) en Música/YTClean/[lista]. Cola de uno en uno; calidad en Ajustes → Descargas. En Android 9 o anterior pide el permiso de almacenamiento para usar la carpeta pública Música (si no se concede, quedan en la carpeta de la app).
 - **Listas de YouTube**: los enlaces `playlist?list=` se abren en una pantalla propia con «Reproducir todo» y «Descargar MP3».
+- **Enviar a Roku**: «Más» en el reproductor o pulsación larga → busca las Roku de la Wi-Fi (SSDP, `ST: roku:ecp`) o acepta su IP. Dos modos: abrir el vídeo en la app de YouTube de la Roku (ECP `POST /launch/837?contentId=ID`; puede tener anuncios) o, experimental, reproducir la URL directa con el canal integrado de la Roku (`POST /input/15985?t=v&u=URL&videoFormat=mp4|hls`; MP4 combinado, normalmente 360p, o HLS en directos). Solo IPv4 privadas y puerto 8060, con sockets propios (la app sigue sin permitir HTTP sin cifrar). Si la Roku responde 403, hay que activar en ella Configuración → Sistema → Configuración avanzada del sistema → Control por aplicaciones móviles → Acceso a la red.
 - **Shorts** ocultos por defecto (desactivable en Ajustes).
 - **País o región** del contenido (Ajustes → Contenido): automático o cualquiera de los que admite YouTube.
 
@@ -25,7 +26,7 @@ Debajo del vídeo, una barra fija muestra las acciones principales (Guardar, Cal
 
 Mantén pulsado cualquier vídeo de una lista para ver todas sus acciones.
 
-Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones, servicios en primer plano (reproducción y descargas) y, solo en Android 9 o anterior, almacenamiento (para Música/YTClean). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
+Lo que **no** hace, a propósito: cuentas, recomendaciones, comentarios, analítica, telemetría ni publicidad. Las notificaciones solo muestran los controles del reproductor y el progreso de las descargas. Permisos: Internet, notificaciones, servicios en primer plano (reproducción y descargas) estado de la red y multidifusión Wi-Fi (para encontrar la Roku) y, solo en Android 9 o anterior, almacenamiento (para Música/YTClean). Los datos (guardados, listas, suscripciones, historial y ajustes) están en las preferencias privadas de la app y no se incluyen en copias de seguridad (`allowBackup=false`).
 
 Privacidad: YouTube recibe la IP del teléfono y los vídeos que consultas, sin cuenta ni cookies de sesión (como con NewPipe). Con SponsorBlock activado, sponsor.ajay.app recibe tu IP y los 4 primeros caracteres del hash SHA-256 del ID del vídeo (compartidos por muchos vídeos). Este acceso no es conforme a las condiciones de servicio de YouTube; es un proyecto personal.
 

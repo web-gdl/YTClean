@@ -10,7 +10,7 @@
   &nbsp;·&nbsp; Android 7.0 o superior
 </p>
 
-**Última versión: 0.8.1** (30-oct-2026) · abre cualquier enlace de YouTube y puede quedar como app predeterminada para ellos. En 0.8.0 llegó la descarga en **MP3** de vídeos y listas enteras. Ver [novedades](#novedades).
+**Última versión: 0.9.0** (3-nov-2026) · **enviar el vídeo a una Roku** de tu red. Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
 
 > Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
@@ -27,6 +27,7 @@
 | ⬇ **Descargas** | Audio (M4A) o vídeo MP4 en la calidad elegida, a `Descargas/YTClean`. |
 | 🎵 **MP3** | Convierte vídeos o **listas enteras** a MP3 en el teléfono (LAME), con título, artista, álbum y portada, en `Música/YTClean`. |
 | 🚫 **Shorts** | Ocultos por defecto; se pueden mostrar desde Ajustes. |
+| 📺 **Enviar a Roku** | Manda el vídeo a una Smart TV o reproductor Roku de tu Wi-Fi: en su app de YouTube o, sin anuncios, con el reproductor de la Roku (experimental). |
 | 🔗 **Enlaces** | Abre cualquier enlace de YouTube (youtube.com, youtu.be, m./music.youtube.com…): vídeos, Shorts, listas, canales y búsquedas. Se puede dejar como app predeterminada para esos enlaces. |
 | 🚗 **Autoestéreo** | Diseño propio para pantallas anchas como los alps 8227L (1024×600): navegación lateral, cuadrícula y reproductor en dos paneles. |
 | 🌍 **País o región** | Elige de qué país es el contenido que te muestra YouTube (automático por defecto). |
@@ -53,6 +54,7 @@ En pantallas anchas en horizontal la app cambia sola de diseño: riel de navegac
 
 | Versión | Cambios |
 |---|---|
+| **0.9.0** | **Enviar a Roku** (app de YouTube de la Roku o, sin anuncios, su reproductor; experimental), con búsqueda en la Wi-Fi o IP manual. |
 | **0.8.1** | Abre cualquier enlace de YouTube (todas las rutas y dominios, `vnd.youtube:`); ajuste **Enlaces de YouTube** para dejar YT Clean como predeterminada. |
 | **0.8.0** | **MP3** de vídeos y listas (locales o de YouTube) convertidos en el teléfono con LAME, con título, artista, álbum y portada, en `Música/YTClean`. Pantalla de listas de YouTube. |
 | **0.7.0** | Diseño para autoestéreos 8227L y tabletas en horizontal. |
@@ -67,7 +69,8 @@ Detalle completo en [CHANGELOG.md](CHANGELOG.md).
 - Los vídeos se obtienen directamente de YouTube desde el teléfono con [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor): YouTube ve la IP del teléfono y lo que consultas, sin cuenta ni cookies de sesión.
 - Con SponsorBlock activado, `sponsor.ajay.app` recibe solo los 4 primeros caracteres del hash del ID del vídeo, que comparten muchos vídeos. Se desactiva en Ajustes.
 - Guardados, listas, suscripciones e historial se quedan en el teléfono. No se incluyen en copias de seguridad y se borran desde Ajustes. El historial está desactivado por defecto.
-- Permisos: Internet, notificaciones (controles y descargas) y servicios en primer plano (reproducción y descargas).
+- Permisos: Internet, notificaciones (controles y descargas), servicios en primer plano (reproducción y descargas) y estado de red y multidifusión Wi-Fi (solo para encontrar la Roku).
+- «Enviar a Roku» solo habla con la Roku dentro de tu red local. En el modo sin anuncios es la Roku la que pide el vídeo a YouTube.
 
 Este acceso a YouTube no es conforme a sus condiciones de servicio. Es un proyecto personal, sin afiliación con YouTube ni con Google.
 

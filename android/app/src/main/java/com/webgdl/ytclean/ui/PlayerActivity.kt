@@ -213,6 +213,7 @@ class PlayerActivity : AppCompatActivity() {
         val s = manager.state.value
         val item = s.current ?: return
         val rows = mutableListOf<Triple<Int, String, () -> Unit>>(
+            Triple(R.drawable.ic_cast, getString(R.string.send_to_roku)) { RokuCast.show(this, item, s.info) },
             Triple(R.drawable.ic_playlist_add, getString(R.string.add_to_playlist)) { VideoActions.addToPlaylist(this, item) },
             Triple(R.drawable.ic_share, getString(R.string.share)) {
                 startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, item.url), getString(R.string.share)))

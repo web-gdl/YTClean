@@ -25,4 +25,5 @@
     <string name="add_to_playlist">Añadir a una lista</string>
     <string name="view_queue">Ver la cola</string>
     <string name="go_to_channel">Ir al canal</string>
+    <string name="send_to_roku">Enviar a Roku</string>
 </resources>

@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- «Enviar a Roku»: buscar la Roku en la Wi-Fi (SSDP) y hablarle solo por la red local. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <!-- Solo Android 9 o anterior: guardar los MP3 en la carpeta pública Música/YTClean. -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"

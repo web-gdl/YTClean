@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 0.9.0 — 2026-11-03
+
+- Android: **Enviar a Roku**. Desde «Más» en el reproductor o con la pulsación larga de cualquier vídeo, busca las Roku de la red Wi-Fi (SSDP) o acepta su IP, y recuerda la última usada.
+  - **En la app de YouTube de la Roku** (recomendado): abre ese vídeo allí (ECP `launch/837`). Puede mostrar anuncios, porque es la app oficial de la Roku.
+  - **Sin anuncios, con el reproductor de la Roku** (experimental): la Roku reproduce directamente el MP4 combinado del vídeo (normalmente 360p) o el HLS de los directos.
+  - Al enviar, el vídeo se pausa en el teléfono. La comunicación es solo local (IPv4 privadas, puerto 8060), con sockets propios para no permitir HTTP sin cifrar al resto de la app. Si la Roku rechaza el control, la app explica qué ajuste cambiar en ella.
+- Permisos nuevos: estado de la red y multidifusión Wi-Fi (para encontrar la Roku).
+
 ## 0.8.1 — 2026-10-30
 
 - Android: **YT Clean puede abrir cualquier enlace de YouTube por defecto**: todas las rutas de youtube.com, www/m/music.youtube.com, youtu.be y youtube-nocookie.com (http y https) y los enlaces `vnd.youtube:`. Las búsquedas (`/results?search_query=`) se abren como búsqueda y el texto compartido sin enlace se busca.

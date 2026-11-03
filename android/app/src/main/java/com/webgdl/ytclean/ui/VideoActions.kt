@@ -31,6 +31,9 @@ object VideoActions {
             "Descargar audio original (M4A)" to { download(context, item.url, DownloadWorker.KIND_AUDIO, lib.quality) },
             "Descargar vídeo (${lib.quality}p)" to { download(context, item.url, DownloadWorker.KIND_VIDEO, lib.quality) },
         )
+        (context as? androidx.appcompat.app.AppCompatActivity)?.let { activity ->
+            actions += "Enviar a Roku" to { RokuCast.show(activity, item) }
+        }
         item.channelUrl?.let { url -> actions += ("Ir al canal${if (item.channel.isNotBlank()) ": ${item.channel}" else ""}") to { openChannel(context, url) } }
         extra?.let { actions += it }
         MaterialAlertDialogBuilder(context)
