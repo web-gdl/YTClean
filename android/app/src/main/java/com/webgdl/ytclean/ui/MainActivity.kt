@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.webgdl.ytclean.R
 import com.webgdl.ytclean.data.Library
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var search: FeedController
     private lateinit var subs: FeedController
     private var subsLoaded = false
+    /** true mientras la pantalla de inicio muestra el historial en vez de resultados. */
+    private var showingRecent = true
 
     private val askNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
@@ -61,6 +64,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        b.recentAll.setOnClickListener { LibraryListActivity.open(this, LibraryListActivity.MODE_HISTORY) }
+        b.recentEnable.setOnClickListener {
+            Library(this).keepHistory = true
+            showRecent()
+        }
+        // Al borrar el texto del buscador se vuelve al historial.
+        b.searchInput.doAfterTextChanged { if (it.isNullOrEmpty() && !showingRecent) showRecent() }
+
         b.libSaved.setOnClickListener { LibraryListActivity.open(this, LibraryListActivity.MODE_SAVED) }
         b.libHistory.setOnClickListener { LibraryListActivity.open(this, LibraryListActivity.MODE_HISTORY) }
         b.libPlaylists.setOnClickListener { SimpleListActivity.open(this, SimpleListActivity.MODE_PLAYLISTS) }
@@ -89,6 +100,34 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Yt.hideShorts = Library(this).hideShorts
+        // Al volver del reproductor o de Ajustes, el historial puede haber cambiado.
+        if (showingRecent) showRecent()
+    }
+
+    /** Pantalla de inicio sin búsqueda: últimos vídeos vistos (o cómo activar el historial). */
+    private fun showRecent() {
+        showingRecent = true
+        val lib = Library(this)
+        b.recentHeader.visibility = View.VISIBLE
+        if (!lib.keepHistory) {
+            search.showItems(emptyList())
+            b.recentAll.visibility = View.GONE
+            b.recentEnable.visibility = View.VISIBLE
+            b.message.text = "El historial está desactivado. Actívalo para ver aquí lo último que viste. Solo se guarda en este teléfono."
+            return
+        }
+        b.recentEnable.visibility = View.GONE
+        val items = lib.history().take(RECENT_COUNT)
+        search.showItems(items)
+        b.recentAll.visibility = if (lib.history().size > items.size) View.VISIBLE else View.GONE
+        if (items.isEmpty()) b.message.text = getString(R.string.empty_home) + "\n\nAquí verás los últimos vídeos que reproduzcas."
+    }
+
+    /** Pasa de historial a resultados. */
+    private fun leaveRecent() {
+        showingRecent = false
+        b.recentHeader.visibility = View.GONE
+        b.recentEnable.visibility = View.GONE
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -157,6 +196,7 @@ class MainActivity : AppCompatActivity() {
     private fun runSearch(query: String) {
         b.bottomNav.selectedItemId = R.id.nav_home
         b.searchInput.setText(query)
+        leaveRecent()
         search.show(Yt.search(query))
     }
 
@@ -186,6 +226,12 @@ class MainActivity : AppCompatActivity() {
         val url = firstUrl(query)?.let { YoutubeLinks.normalize(it) }
         if (url != null && openYoutubeLink(this, url)) return
         url?.let { YoutubeLinks.searchQuery(it) }?.let { runSearch(it); return }
+        leaveRecent()
         search.show(Yt.search(query))
+    }
+
+    private companion object {
+        /** Vídeos del historial en la pantalla de inicio (el resto, en «Ver todo»). */
+        const val RECENT_COUNT = 30
     }
 }

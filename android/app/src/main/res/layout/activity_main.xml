@@ -51,6 +51,32 @@
                 android:indeterminate="true"
                 android:visibility="gone" />
 
+            <!-- Vistos recientemente: se muestra al abrir la app, mientras no hay búsqueda. -->
+            <LinearLayout
+                android:id="@+id/recentHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="4dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/recent_title"
+                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/recentAll"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recent_all" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/message"
                 android:layout_width="match_parent"
@@ -59,6 +85,15 @@
                 android:padding="24dp"
                 android:text="@string/empty_home"
                 android:textColor="@color/fg_muted" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/recentEnable"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/recent_enable"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"

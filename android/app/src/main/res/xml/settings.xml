@@ -52,9 +52,9 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="Privacidad">
         <SwitchPreferenceCompat
-            app:defaultValue="false"
+            app:defaultValue="true"
             app:key="history"
-            app:summary="Solo en este teléfono. Desactivado por defecto"
+            app:summary="Solo en este teléfono; se muestra al abrir la app"
             app:title="Guardar historial de reproducción" />
         <Preference
             app:key="clear_history"

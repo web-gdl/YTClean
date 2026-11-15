@@ -10,7 +10,7 @@
   &nbsp;·&nbsp; Android 7.0 o superior
 </p>
 
-**Última versión: 0.9.1** (3-nov-2026) · **enviar el vídeo a una Roku** de tu red (0.9.0), ahora entrando como invitado en su app de YouTube. Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
+**Última versión: 0.10.0** (15-nov-2026) · **vistos recientemente** al abrir la app. Antes: **enviar el vídeo a una Roku** de tu red (0.9.x). Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
 
 > Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
@@ -54,6 +54,7 @@ En pantallas anchas en horizontal la app cambia sola de diseño: riel de navegac
 
 | Versión | Cambios |
 |---|---|
+| **0.10.0** | **Vistos recientemente** en la pantalla de inicio; historial activado por defecto (solo en el teléfono). |
 | **0.9.1** | Enviar a Roku entra solo como **invitado** en YouTube de la Roku cuando pide «Agregar una cuenta». |
 | **0.9.0** | **Enviar a Roku** (app de YouTube de la Roku o, sin anuncios, su reproductor; experimental), con búsqueda en la Wi-Fi o IP manual. |
 | **0.8.1** | Abre cualquier enlace de YouTube (todas las rutas y dominios, `vnd.youtube:`); ajuste **Enlaces de YouTube** para dejar YT Clean como predeterminada. |
@@ -69,7 +70,7 @@ Detalle completo en [CHANGELOG.md](CHANGELOG.md).
 - Sin anuncios, cuentas, analítica, telemetría, píxeles ni identificadores propios. No hay ningún servidor de YT Clean.
 - Los vídeos se obtienen directamente de YouTube desde el teléfono con [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor): YouTube ve la IP del teléfono y lo que consultas, sin cuenta ni cookies de sesión.
 - Con SponsorBlock activado, `sponsor.ajay.app` recibe solo los 4 primeros caracteres del hash del ID del vídeo, que comparten muchos vídeos. Se desactiva en Ajustes.
-- Guardados, listas, suscripciones e historial se quedan en el teléfono. No se incluyen en copias de seguridad y se borran desde Ajustes. El historial está desactivado por defecto.
+- Guardados, listas, suscripciones e historial se quedan en el teléfono. No se incluyen en copias de seguridad y se borran desde Ajustes. El historial (activado por defecto desde 0.10.0) se puede desactivar.
 - Permisos: Internet, notificaciones (controles y descargas), servicios en primer plano (reproducción y descargas) y estado de red y multidifusión Wi-Fi (solo para encontrar la Roku).
 - «Enviar a Roku» solo habla con la Roku dentro de tu red local. En el modo sin anuncios es la Roku la que pide el vídeo a YouTube.
 

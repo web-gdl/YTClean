@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 0.10.0 — 2026-11-15
+
+- Android: **«Vistos recientemente» en la pantalla de inicio**. Al abrir la app se muestran debajo del buscador los últimos 30 vídeos reproducidos (cuadrícula en el autoestéreo), con «Ver todo» para el historial completo. Al buscar se sustituyen por los resultados y vuelven al borrar el texto del buscador.
+- El historial pasa a estar **activado por defecto** (sigue guardándose solo en el teléfono; se desactiva o se borra en Ajustes → Privacidad). Si está desactivado, el inicio ofrece «Activar historial».
+
 ## 0.9.1 — 2026-11-03
 
 - Android, **Enviar a Roku**: si la app de YouTube de la Roku estaba cerrada, al abrirse se quedaba en «Agregar una cuenta» y no reproducía el vídeo. Ahora YT Clean **entra como invitado** con las teclas del control (Abajo → OK en «Mirar como invitado») y vuelve a enviar el vídeo. Antes de pulsar nada comprueba si la Roku ya está reproduciendo (`query/media-player`), y si la app ya estaba abierta no pulsa ninguna tecla. Si la Roku no confirma la reproducción, explica qué hacer.

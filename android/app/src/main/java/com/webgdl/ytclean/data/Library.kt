@@ -25,7 +25,9 @@ class Library(context: Context) {
     val quality: Int get() = sp.getString("quality", "720")?.toIntOrNull() ?: 720
     val audioOnly: Boolean get() = sp.getBoolean("audio_only", false)
     val hideShorts: Boolean get() = sp.getBoolean("hide_shorts", true)
-    val keepHistory: Boolean get() = sp.getBoolean("history", false)
+    var keepHistory: Boolean
+        get() = sp.getBoolean("history", true)
+        set(value) = sp.edit().putBoolean("history", value).apply()
     val sponsorBlock: Boolean get() = sp.getBoolean("sponsorblock", true)
     val captions: Boolean get() = sp.getBoolean("captions", false)
     /** Tasa de bits de los MP3 (kbps). */

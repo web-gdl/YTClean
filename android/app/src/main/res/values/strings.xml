@@ -26,4 +26,7 @@
     <string name="view_queue">Ver la cola</string>
     <string name="go_to_channel">Ir al canal</string>
     <string name="send_to_roku">Enviar a Roku</string>
+    <string name="recent_title">Vistos recientemente</string>
+    <string name="recent_all">Ver todo</string>
+    <string name="recent_enable">Activar historial</string>
 </resources>

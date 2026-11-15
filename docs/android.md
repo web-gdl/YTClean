@@ -9,12 +9,13 @@
 ## Qué hace
 
 - **Enlaces de YouTube por defecto**: abre cualquier enlace de youtube.com, youtu.be, m./music.youtube.com y youtube-nocookie.com. En Android 12+ hay que activarlo una vez en Ajustes → Enlaces de YouTube (lleva a «Abrir de forma predeterminada» → «Añadir enlace»); si la app oficial de YouTube los tiene asignados, primero hay que desactivar en ella «Abrir enlaces compatibles». En Android 11 o anterior basta con elegir YT Clean y «Siempre».
+- **Vistos recientemente** al abrir la app: los últimos 30 vídeos del historial debajo del buscador, con «Ver todo».
 - **Buscar** (solo al enviar; sin tendencias ni recomendaciones), con desplazamiento infinito. Abre enlaces compartidos o pegados.
 - **Reproductor nativo**: calidad 144p–2160p, solo audio, subtítulos, pantalla completa, imagen en imagen y **segundo plano con controles en la notificación**.
 - **Cola**: «Reproducir a continuación», «Añadir a la cola», ver y saltar en la cola, avance automático.
 - **SponsorBlock**: salta patrocinios, autopromoción, recordatorios de suscripción y partes sin música.
 - **Suscripciones locales** (sin cuenta) con pestaña de novedades.
-- **Biblioteca**: guardados, listas de reproducción locales, canales suscritos, historial (opcional) y descargas.
+- **Biblioteca**: guardados, listas de reproducción locales, canales suscritos, historial (activado por defecto, solo local) y descargas.
 - **Descargas** de audio (M4A) o vídeo MP4 (vídeo y audio unidos sin recodificar) a Descargas/YTClean.
 - **MP3** de un vídeo o de una lista entera (local o de YouTube): se descarga el audio, se convierte en el teléfono con LAME (nativo) y se guarda con etiqueta ID3 (título, artista, álbum y portada) en Música/YTClean/[lista]. Cola de uno en uno; calidad en Ajustes → Descargas. En Android 9 o anterior pide el permiso de almacenamiento para usar la carpeta pública Música (si no se concede, quedan en la carpeta de la app).
 - **Listas de YouTube**: los enlaces `playlist?list=` se abren en una pantalla propia con «Reproducir todo» y «Descargar MP3».
