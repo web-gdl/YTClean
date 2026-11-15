@@ -34,7 +34,7 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
       - run: npm run check:connections
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
