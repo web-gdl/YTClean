@@ -10,7 +10,7 @@
   &nbsp;·&nbsp; Android 7.0 o superior
 </p>
 
-**Última versión: 0.10.0** (15-nov-2026) · **vistos recientemente** al abrir la app. Antes: **enviar el vídeo a una Roku** de tu red (0.9.x). Antes: apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
+**Última versión: 0.10.0** (15-nov-2026) · **vistos recientemente** al abrir la app. Versiones anteriores: **enviar el vídeo a una Roku** (0.9.x), apertura de cualquier enlace de YouTube (0.8.1) y **MP3** de vídeos y listas (0.8.0). Ver [novedades](#novedades).
 
 > Las imágenes son ilustraciones de la interfaz con contenido de ejemplo (títulos y canales inventados), no capturas de vídeos reales.
 
@@ -35,6 +35,7 @@
 Mantén pulsado cualquier vídeo para ver todas sus acciones.
 
 <p align="center">
+  <img src="docs/img/inicio.png" width="200" alt="Inicio con vistos recientemente">
   <img src="docs/img/buscar.png" width="200" alt="Búsqueda">
   <img src="docs/img/reproductor.png" width="200" alt="Reproductor con SponsorBlock y cola">
   <img src="docs/img/acciones.png" width="200" alt="Acciones de un vídeo">
